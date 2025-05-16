@@ -1,0 +1,148 @@
+<html>
+<body>
+<pre>
+<h1>礦ision Build Log</h1>
+<h2>Tool Versions:</h2>
+IDE-Version: μVision V5.35.0.0
+Copyright (C) 2021 ARM Ltd and ARM Germany GmbH. All rights reserved.
+License Information:  ,  , LIC=FYKYW-QMGK2-MMI9I-T4ZM2-5WIZ1-PH2PW
+ 
+Tool Versions:
+Toolchain:       MDK-ARM Plus  Version: 5.35.0.2
+Toolchain Path:  D:\DevelopApp\Keil_v5\ARM\ARMCC\Bin
+C Compiler:      Armcc.exe V5.06 update 7 (build 960)
+Assembler:       Armasm.exe V5.06 update 7 (build 960)
+Linker/Locator:  ArmLink.exe V5.06 update 7 (build 960)
+Library Manager: ArmAr.exe V5.06 update 7 (build 960)
+Hex Converter:   FromElf.exe V5.06 update 7 (build 960)
+CPU DLL:         SARMCM3.DLL V5.35.0.2
+Dialog DLL:      DCM.DLL V1.17.3.0
+Target DLL:      Segger\JL2CM3.dll V2.99.40.0
+Dialog DLL:      TCM.DLL V1.53.0.0
+ 
+<h2>Project:</h2>
+C:\Users\zgg\Desktop\demo\app\Project\MDK-ARM\Project.uvprojx
+Project File Date:  05/12/2025
+
+<h2>Output:</h2>
+*** Using Compiler 'V5.06 update 7 (build 960)', folder: 'D:\DevelopApp\Keil_v5\ARM\ARMCC\Bin'
+Build target 'GD32F450'
+compiling task_module_comm.c...
+..\src\task\task_module\task_module_comm.c(102): error:  #136: struct "<unnamed>"  has no field "ucDeviceType"
+  	if(pstSysParams->ucDeviceType == TOOLING_TEST_BOARD)
+..\src\task\task_module\task_module_comm.c(102): error:  #20: identifier "TOOLING_TEST_BOARD" is undefined
+  	if(pstSysParams->ucDeviceType == TOOLING_TEST_BOARD)
+..\src\task\task_module\task_module_comm.c: 0 warnings, 2 errors
+compiling main.c...
+compiling telnet.c...
+compiling cli_cmd.c...
+compiling console_uart.c...
+compiling api_sys_param.c...
+compiling api_gpio.c...
+compiling at_utils.c...
+compiling api_upgrade.c...
+compiling sys_mutex.c...
+compiling sys_base.c...
+..\src\sys\sys_base.c(185): warning:  #177-D: function "Sys_ModuleReset"  was declared but never referenced
+  static void Sys_ModuleReset(void)
+..\src\sys\sys_base.c: 1 warning, 0 errors
+compiling sys_sem.c...
+compiling sys_module.c...
+compiling sys_monitor.c...
+compiling sys_timer.c...
+compiling sys_critical.c...
+compiling llif_tcpserver.c...
+compiling interface.c...
+compiling llif_udpgroup.c...
+compiling llif_gpio.c...
+compiling llif_can.c...
+compiling llif_inter_flash.c...
+compiling llif_uart.c...
+compiling llif_udp.c...
+compiling llif_tcpclient.c...
+compiling tcpserver.c...
+compiling netconf.c...
+compiling udpgroup.c...
+compiling bsp_can.c...
+compiling bsp_enet.c...
+compiling gd32f4xx_it.c...
+compiling wiegand.c...
+..\src\physical\Wiegand\wiegand.c(338): error:  #136: struct "<unnamed>"  has no field "WiegandConfigParam"
+  		Delay_10US(pstSysParams->WiegandConfigParam.dwBitPulse);       //电平拉低Tlow时间,由于光耦有拖尾，故减去50us时间
+..\src\physical\Wiegand\wiegand.c(344): error:  #136: struct "<unnamed>"  has no field "WiegandConfigParam"
+  		Delay_10US(pstSysParams->WiegandConfigParam.dwBitPulse);      //电平拉低.....
+..\src\physical\Wiegand\wiegand.c(348): error:  #136: struct "<unnamed>"  has no field "WiegandConfigParam"
+  	Delay_100US(pstSysParams->WiegandConfigParam.dwBitInterval);
+..\src\physical\Wiegand\wiegand.c(362): error:  #136: struct "<unnamed>"  has no field "WiegandConfigParam"
+  				Delay_10US(pstSysParams->WiegandConfigParam.dwBitPulse);     //电平拉低
+..\src\physical\Wiegand\wiegand.c(368): error:  #136: struct "<unnamed>"  has no field "WiegandConfigParam"
+  				Delay_10US(pstSysParams->WiegandConfigParam.dwBitPulse);     //电平拉低
+..\src\physical\Wiegand\wiegand.c(373): error:  #136: struct "<unnamed>"  has no field "WiegandConfigParam"
+  			Delay_100US(pstSysParams->WiegandConfigParam.dwBitInterval);
+..\src\physical\Wiegand\wiegand.c(385): error:  #136: struct "<unnamed>"  has no field "WiegandConfigParam"
+  		Delay_10US(pstSysParams->WiegandConfigParam.dwBitPulse);     //电平拉低
+..\src\physical\Wiegand\wiegand.c(391): error:  #136: struct "<unnamed>"  has no field "WiegandConfigParam"
+  		Delay_10US(pstSysParams->WiegandConfigParam.dwBitPulse);     //电平拉低
+..\src\physical\Wiegand\wiegand.c(398): error:  #136: struct "<unnamed>"  has no field "WiegandConfigParam"
+  	Delay_100US(pstSysParams->WiegandConfigParam.dwBitInterval);
+..\src\physical\Wiegand\wiegand.c(401): error:  #136: struct "<unnamed>"  has no field "WiegandConfigParam"
+  	OSTimeDlyHMSM(0,0,pstSysParams->WiegandConfigParam.dwFrameInterval/1000,pstSysParams->WiegandConfigParam.dwFrameInterval%1000, OS_OPT_TIME_PERIODIC, &err);
+..\src\physical\Wiegand\wiegand.c(401): error:  #136: struct "<unnamed>"  has no field "WiegandConfigParam"
+  	OSTimeDlyHMSM(0,0,pstSysParams->WiegandConfigParam.dwFrameInterval/1000,pstSysParams->WiegandConfigParam.dwFrameInterval%1000, OS_OPT_TIME_PERIODIC, &err);
+..\src\physical\Wiegand\wiegand.c(484): error:  #136: struct "<unnamed>"  has no field "WiegandConfigParam"
+  		Delay_10US(pstSysParams->WiegandConfigParam.dwBitPulse);       //电平拉低Tlow时间,由于光耦有拖尾，故减去50us时间
+..\src\physical\Wiegand\wiegand.c(490): error:  #136: struct "<unnamed>"  has no field "WiegandConfigParam"
+  		Delay_10US(pstSysParams->WiegandConfigParam.dwBitPulse);      //电平拉低.....
+..\src\physical\Wiegand\wiegand.c(494): error:  #136: struct "<unnamed>"  has no field "WiegandConfigParam"
+  	Delay_100US(pstSysParams->WiegandConfigParam.dwBitInterval); 
+..\src\physical\Wiegand\wiegand.c(507): error:  #136: struct "<unnamed>"  has no field "WiegandConfigParam"
+  				Delay_10US(pstSysParams->WiegandConfigParam.dwBitPulse);   //电平拉低
+..\src\physical\Wiegand\wiegand.c(513): error:  #136: struct "<unnamed>"  has no field "WiegandConfigParam"
+  				Delay_10US(pstSysParams->WiegandConfigParam.dwBitPulse);     //电平拉低
+..\src\physical\Wiegand\wiegand.c(517): error:  #136: struct "<unnamed>"  has no field "WiegandConfigParam"
+  			Delay_100US(pstSysParams->WiegandConfigParam.dwBitInterval); 
+..\src\physical\Wiegand\wiegand.c(527): error:  #136: struct "<unnamed>"  has no field "WiegandConfigParam"
+  		Delay_10US(pstSysParams->WiegandConfigParam.dwBitPulse);     //电平拉低
+..\src\physical\Wiegand\wiegand.c(533): error:  #136: struct "<unnamed>"  has no field "WiegandConfigParam"
+  		Delay_10US(pstSysParams->WiegandConfigParam.dwBitPulse);     //电平拉低
+..\src\physical\Wiegand\wiegand.c(538): error:  #136: struct "<unnamed>"  has no field "WiegandConfigParam"
+  	Delay_100US(pstSysParams->WiegandConfigParam.dwBitInterval); 
+..\src\physical\Wiegand\wiegand.c(541): error:  #136: struct "<unnamed>"  has no field "WiegandConfigParam"
+  	OSTimeDlyHMSM(0,0,pstSysParams->WiegandConfigParam.dwFrameInterval/1000,pstSysParams->WiegandConfigParam.dwFrameInterval%1000, OS_OPT_TIME_PERIODIC, &err);
+..\src\physical\Wiegand\wiegand.c(541): error:  #136: struct "<unnamed>"  has no field "WiegandConfigParam"
+  	OSTimeDlyHMSM(0,0,pstSysParams->WiegandConfigParam.dwFrameInterval/1000,pstSysParams->WiegandConfigParam.dwFrameInterval%1000, OS_OPT_TIME_PERIODIC, &err);
+..\src\physical\Wiegand\wiegand.c: 0 warnings, 22 errors
+compiling bsp_uart.c...
+compiling tcpclient.c...
+compiling udp_ip_search.c...
+compiling ethernetif.c...
+compiling dbg_log.c...
+compiling system_gd32f4xx.c...
+".\output\IR101RC09-G-WG.axf" - 24 Error(s), 1 Warning(s).
+
+<h2>Software Packages used:</h2>
+
+Package Vendor: ARM
+                http://www.keil.com/pack/ARM.CMSIS.5.8.0.pack
+                ARM.CMSIS.5.8.0
+                CMSIS (Common Microcontroller Software Interface Standard)
+   * Component: CORE Version: 5.5.0
+
+Package Vendor: GigaDevice
+                http://gd32mcu.com/data/documents/pack/GigaDevice.GD32F4xx_DFP.2.0.0.pack
+                GigaDevice.GD32F4xx_DFP.2.0.0
+                GigaDevice GD32F4xx Series Device Support and Examples
+
+<h2>Collection of Component include folders:</h2>
+  .\RTE\_GD32F450
+  D:\DevelopApp\Keil_v5\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Include
+  D:\DevelopApp\Keil_v5\Packs\GigaDevice\GD32F4xx_DFP\2.0.0\Device\F4XX\Include
+
+<h2>Collection of Component Files used:</h2>
+
+   * Component: ARM::CMSIS:CORE:5.5.0
+Target not created.
+Build Time Elapsed:  00:00:17
+</pre>
+</body>
+</html>

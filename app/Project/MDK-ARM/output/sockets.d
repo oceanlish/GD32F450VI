@@ -1,0 +1,9 @@
+.\output\sockets.o: ..\..\Utilities\Third_Party\lwip-1.4.1\src\api\sockets.c
+.\output\sockets.o: ..\..\Utilities\Third_Party\lwip-1.4.1\src\include\lwip/opt.h
+.\output\sockets.o: ..\inc\lwipopts.h
+.\output\sockets.o: ..\..\Utilities\Third_Party\lwip-1.4.1\src\include\lwip/debug.h
+.\output\sockets.o: ..\..\Utilities\Third_Party\lwip-1.4.1\src\include\lwip/arch.h
+.\output\sockets.o: ..\..\Utilities\Third_Party\lwip-1.4.1\port\GD32F4xx\arch/cc.h
+.\output\sockets.o: ..\..\Utilities\Third_Party\lwip-1.4.1\port\GD32F4xx\arch/cpu.h
+.\output\sockets.o: ..\..\Utilities\Third_Party\lwip-1.4.1\src\include\lwip/opt.h
+.\output\sockets.o: D:\DevelopApp\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h

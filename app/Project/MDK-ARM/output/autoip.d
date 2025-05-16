@@ -1,0 +1,9 @@
+.\output\autoip.o: ..\..\Utilities\Third_Party\lwip-1.4.1\src\core\ipv4\autoip.c
+.\output\autoip.o: ..\..\Utilities\Third_Party\lwip-1.4.1\src\include\lwip/opt.h
+.\output\autoip.o: ..\inc\lwipopts.h
+.\output\autoip.o: ..\..\Utilities\Third_Party\lwip-1.4.1\src\include\lwip/debug.h
+.\output\autoip.o: ..\..\Utilities\Third_Party\lwip-1.4.1\src\include\lwip/arch.h
+.\output\autoip.o: ..\..\Utilities\Third_Party\lwip-1.4.1\port\GD32F4xx\arch/cc.h
+.\output\autoip.o: ..\..\Utilities\Third_Party\lwip-1.4.1\port\GD32F4xx\arch/cpu.h
+.\output\autoip.o: ..\..\Utilities\Third_Party\lwip-1.4.1\src\include\lwip/opt.h
+.\output\autoip.o: D:\DevelopApp\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h

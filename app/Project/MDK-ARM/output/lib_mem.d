@@ -1,0 +1,12 @@
+.\output\lib_mem.o: ..\..\Utilities\Third_Party\uCOS_III\uC-LIB\lib_mem.c
+.\output\lib_mem.o: ..\..\Utilities\Third_Party\uCOS_III\uC-LIB\lib_mem.h
+.\output\lib_mem.o: ..\..\Utilities\Third_Party\uCOS_III\uC-CPU\ARM-Cortex-M4\RealView\cpu.h
+.\output\lib_mem.o: ..\..\Utilities\Third_Party\uCOS_III\uC-CPU\cpu_def.h
+.\output\lib_mem.o: ..\..\Utilities\Third_Party\uCOS_III\uCOS_CONFIG\cpu_cfg.h
+.\output\lib_mem.o: ..\..\Utilities\Third_Party\uCOS_III\uC-CPU\cpu_core.h
+.\output\lib_mem.o: ..\..\Utilities\Third_Party\uCOS_III\uC-LIB\lib_def.h
+.\output\lib_mem.o: ..\..\Utilities\Third_Party\uCOS_III\uC-LIB\lib_mem.h
+.\output\lib_mem.o: ..\..\Utilities\Third_Party\uCOS_III\uC-LIB\lib_str.h
+.\output\lib_mem.o: ..\..\Utilities\Third_Party\uCOS_III\uC-LIB\lib_ascii.h
+.\output\lib_mem.o: ..\..\Utilities\Third_Party\uCOS_III\uCOS_CONFIG\lib_cfg.h
+.\output\lib_mem.o: ..\..\Utilities\Third_Party\uCOS_III\uC-LIB\lib_math.h

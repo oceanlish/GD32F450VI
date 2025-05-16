@@ -1,0 +1,9 @@
+.\output\netbuf.o: ..\..\Utilities\Third_Party\lwip-1.4.1\src\api\netbuf.c
+.\output\netbuf.o: ..\..\Utilities\Third_Party\lwip-1.4.1\src\include\lwip/opt.h
+.\output\netbuf.o: ..\inc\lwipopts.h
+.\output\netbuf.o: ..\..\Utilities\Third_Party\lwip-1.4.1\src\include\lwip/debug.h
+.\output\netbuf.o: ..\..\Utilities\Third_Party\lwip-1.4.1\src\include\lwip/arch.h
+.\output\netbuf.o: ..\..\Utilities\Third_Party\lwip-1.4.1\port\GD32F4xx\arch/cc.h
+.\output\netbuf.o: ..\..\Utilities\Third_Party\lwip-1.4.1\port\GD32F4xx\arch/cpu.h
+.\output\netbuf.o: ..\..\Utilities\Third_Party\lwip-1.4.1\src\include\lwip/opt.h
+.\output\netbuf.o: D:\DevelopApp\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h

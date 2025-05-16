@@ -1,0 +1,11 @@
+.\output\cpu_core.o: ..\..\Utilities\Third_Party\uCOS_III\uC-CPU\cpu_core.c
+.\output\cpu_core.o: ..\..\Utilities\Third_Party\uCOS_III\uC-CPU\cpu_core.h
+.\output\cpu_core.o: ..\..\Utilities\Third_Party\uCOS_III\uC-CPU\ARM-Cortex-M4\RealView\cpu.h
+.\output\cpu_core.o: ..\..\Utilities\Third_Party\uCOS_III\uC-CPU\cpu_def.h
+.\output\cpu_core.o: ..\..\Utilities\Third_Party\uCOS_III\uCOS_CONFIG\cpu_cfg.h
+.\output\cpu_core.o: ..\..\Utilities\Third_Party\uCOS_III\uC-LIB\lib_def.h
+.\output\cpu_core.o: ..\..\Utilities\Third_Party\uCOS_III\uC-LIB\lib_mem.h
+.\output\cpu_core.o: ..\..\Utilities\Third_Party\uCOS_III\uC-CPU\cpu_core.h
+.\output\cpu_core.o: ..\..\Utilities\Third_Party\uCOS_III\uCOS_CONFIG\lib_cfg.h
+.\output\cpu_core.o: ..\..\Utilities\Third_Party\uCOS_III\uC-LIB\lib_str.h
+.\output\cpu_core.o: ..\..\Utilities\Third_Party\uCOS_III\uC-LIB\lib_ascii.h
