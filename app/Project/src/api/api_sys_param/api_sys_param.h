@@ -1,6 +1,6 @@
 /**
  * @file api_sys_param.h
- * @brief ÏµÍ³²ÎÊıÏà¹Ø½á¹¹ÌåÓë²Ù×÷½Ó¿Ú¶¨Òå
+ * @brief ç³»ç»Ÿå‚æ•°ç›¸å…³ç»“æ„ä½“ä¸æ“ä½œæ¥å£å®šä¹‰
  * @author 
  * @date 
  */
@@ -10,137 +10,149 @@
 
 #include "inf_defs.h"
 
-/** ÏµÍ³²ÎÊı»Ö¸´ÀàĞÍ¶¨Òå */
-#define SYSPARAM_RECOVERY_FIRST 0    /**< Ê×´Î»Ö¸´ */
-#define SYSPARAM_RECOVERY_FACTORY 1   /**< »Ö¸´³ö³§ÉèÖÃ */
+/** ç³»ç»Ÿå‚æ•°æ¢å¤ç±»å‹å®šä¹‰ */
+#define SYSPARAM_RECOVERY_FIRST 0    /**< é¦–æ¬¡æ¢å¤ */
+#define SYSPARAM_RECOVERY_FACTORY 1   /**< æ¢å¤å‡ºå‚è®¾ç½® */
 
-/** Í¨ĞÅ½Ó¿ÚÀàĞÍ¶¨Òå */
-#define UART_INTERFACE 0     /**< ´®¿Ú½Ó¿Ú */
-#define NET_INTERFACE 1      /**< ÍøÂç½Ó¿Ú */
+/** é€šä¿¡æ¥å£ç±»å‹å®šä¹‰ */
+#define UART_INTERFACE 0     /**< ä¸²å£æ¥å£ */
+#define NET_INTERFACE 1      /**< ç½‘ç»œæ¥å£ */
 
-/** ´¥·¢·½Ê½¶¨Òå */
-#define EDGE_TRIGGER 1       /**< ±ßÑØ´¥·¢ */
-#define LEVEL_TRIGGER 0      /**< µçÆ½´¥·¢ */
+/** è§¦å‘æ–¹å¼å®šä¹‰ */
+#define EDGE_TRIGGER 1       /**< è¾¹æ²¿è§¦å‘ */
+#define LEVEL_TRIGGER 0      /**< ç”µå¹³è§¦å‘ */
+
+#define TOOLING_TEST_BOARD  1   // æ ¹æ®å®é™…è®¾å¤‡ç±»å‹ç¼–å·å¡«å†™
 
 #pragma pack(1)
 
 /**
- * @brief Éè±¸²ÎÊı½á¹¹Ìå 152
+ * @brief è®¾å¤‡å‚æ•°ç»“æ„ä½“ 152
  */
 typedef struct
 {
-    unsigned char szDevID[4];        /**< Éè±¸ID */
-    unsigned char wdt_test;          /**< ¿´ÃÅ¹·²âÊÔÊ¹ÄÜ±êÖ¾ */
-    unsigned char szRes[147];        /**< ±£Áô×Ö½Ú */
+    unsigned char szDevID[4];        /**< è®¾å¤‡ID */
+    unsigned char wdt_test;          /**< çœ‹é—¨ç‹—æµ‹è¯•ä½¿èƒ½æ ‡å¿— */
+    unsigned char szRes[147];        /**< ä¿ç•™å­—èŠ‚ */
 } ST_DEVICE_PARAM;
 
 /**
- * @brief ÍøÂç²ÎÊı½á¹¹Ìå 184
+ * @brief ç½‘ç»œå‚æ•°ç»“æ„ä½“ 184
  */
 typedef struct
 {
-    unsigned char LocalIp[4];        /**< ±¾µØIPµØÖ· */
-    unsigned char Mask[4];           /**< ×ÓÍøÑÚÂë */
-    unsigned char gateway[4];        /**< Íø¹ØµØÖ· */
-    unsigned char ServerIp[4];       /**< ·şÎñÆ÷IPµØÖ· */
-    unsigned short ServerPort;       /**< ·şÎñÆ÷¶Ë¿ÚºÅ */
-    unsigned short LocalPort;        /**< ±¾µØ¶Ë¿ÚºÅ */
-    unsigned char szMac[6];          /**< MACµØÖ· */
-    char Dname[99];                  /**< ÓòÃû */
-    char DnameEn;                    /**< ÓòÃûÊ¹ÄÜ±êÖ¾ */
-    unsigned char telnet_en;         /**< telnetÊ¹ÄÜ±êÖ¾ */
-    unsigned char DeviceRole;        /**< Éè±¸½ÇÉ« */
-    unsigned char szRes[56];         /**< ±£Áô×Ö½Ú */
+    unsigned char LocalIp[4];        /**< æœ¬åœ°IPåœ°å€ */
+    unsigned char Mask[4];           /**< å­ç½‘æ©ç  */
+    unsigned char gateway[4];        /**< ç½‘å…³åœ°å€ */
+    unsigned char ServerIp[4];       /**< æœåŠ¡å™¨IPåœ°å€ */
+    unsigned short ServerPort;       /**< æœåŠ¡å™¨ç«¯å£å· */
+    unsigned short LocalPort;        /**< æœ¬åœ°ç«¯å£å· */
+    unsigned char szMac[6];          /**< MACåœ°å€ */
+    char Dname[99];                  /**< åŸŸå */
+    char DnameEn;                    /**< åŸŸåä½¿èƒ½æ ‡å¿— */
+    unsigned char telnet_en;         /**< telnetä½¿èƒ½æ ‡å¿— */
+    unsigned char DeviceRole;        /**< è®¾å¤‡è§’è‰² */
+    unsigned char szRes[56];         /**< ä¿ç•™å­—èŠ‚ */
 } ST_NET_PARAM;
 
 /**
- * @brief ²úÆ·ĞÅÏ¢½á¹¹Ìå 120
+ * @brief äº§å“ä¿¡æ¯ç»“æ„ä½“ 120
  */
 typedef struct
 {
-    char szProductName[50];          /**< ²úÆ·Ãû³Æ */
-    char szProductCode[50];          /**< ²úÆ·±àÂë */
-    unsigned char szRes[20];         /**< ±£Áô×Ö½Ú */
+    char szProductName[50];          /**< äº§å“åç§° */
+    char szProductCode[50];          /**< äº§å“ç¼–ç  */
+    unsigned char szRes[20];         /**< ä¿ç•™å­—èŠ‚ */
 } ST_PRODUCT_INFO;
 
 /**
- * @brief Éı¼¶ĞÅÏ¢½á¹¹Ìå 240
+ * @brief å‡çº§ä¿¡æ¯ç»“æ„ä½“ 240
  */
 typedef struct
 {
-    int valid;                     /**< Éı¼¶ĞÅÏ¢ÓĞĞ§±êÖ¾ */
-    char uuid[50];                 /**< Éı¼¶°üÎ¨Ò»±êÊ¶·û */
-    char ver[50];                  /**< Éı¼¶°ü°æ±¾ºÅ */
-    char url[100];                 /**< Éı¼¶°üÏÂÔØµØÖ· */
-    unsigned int size;             /**< Éı¼¶°ü´óĞ¡ */
-    unsigned short index;          /**< Éı¼¶°üĞòºÅ */
-    char NeedReport;               /**< ÊÇ·ñĞèÒªÉÏ±¨Éı¼¶½á¹û */
-    char HadCrc;                   /**< ÊÇ·ñÒÑ½øĞĞCRCĞ£Ñé */
-    unsigned int crc;              /**< CRCĞ£ÑéÖµ */
-    char UpdateMethod;             /**< Éı¼¶·½Ê½ */
-    unsigned char FirmwareKind;    /**< ¹Ì¼şÀàĞÍ */
-    unsigned char szRes[22];       /**< ±£Áô×Ö½Ú */
+    int valid;                     /**< å‡çº§ä¿¡æ¯æœ‰æ•ˆæ ‡å¿— */
+    char uuid[50];                 /**< å‡çº§åŒ…å”¯ä¸€æ ‡è¯†ç¬¦ */
+    char ver[50];                  /**< å‡çº§åŒ…ç‰ˆæœ¬å· */
+    char url[100];                 /**< å‡çº§åŒ…ä¸‹è½½åœ°å€ */
+    unsigned int size;             /**< å‡çº§åŒ…å¤§å° */
+    unsigned short index;          /**< å‡çº§åŒ…åºå· */
+    char NeedReport;               /**< æ˜¯å¦éœ€è¦ä¸ŠæŠ¥å‡çº§ç»“æœ */
+    char HadCrc;                   /**< æ˜¯å¦å·²è¿›è¡ŒCRCæ ¡éªŒ */
+    unsigned int crc;              /**< CRCæ ¡éªŒå€¼ */
+    char UpdateMethod;             /**< å‡çº§æ–¹å¼ */
+    unsigned char FirmwareKind;    /**< å›ºä»¶ç±»å‹ */
+    unsigned char szRes[22];       /**< ä¿ç•™å­—èŠ‚ */
 } ST_UPDATE_INFO;
 
 /**
- * @brief ´®¿Ú²ÎÊı½á¹¹Ìå 16
+ * @brief ä¸²å£å‚æ•°ç»“æ„ä½“ 16
  */
 typedef struct
 {
-    unsigned int dwBaudrate;        /**< ´®¿Ú²¨ÌØÂÊ */
-    unsigned char ucSerialMod;      /**< ´®¿Ú¹¤×÷Ä£Ê½ */
-    unsigned char ucStopBits;       /**< Í£Ö¹Î»ÉèÖÃ */
-    unsigned char ucWordBits;       /**< Êı¾İÎ»³¤¶È */
-    unsigned char ucParityBits;     /**< Ğ£ÑéÎ»ÉèÖÃ */
-    unsigned char ucUartKind;       /**< ´®¿ÚÀàĞÍ */
-    unsigned char szRes[7];         /**< ±£Áô×Ö½Ú */
+    unsigned int dwBaudrate;        /**< ä¸²å£æ³¢ç‰¹ç‡ */
+    unsigned char ucSerialMod;      /**< ä¸²å£å·¥ä½œæ¨¡å¼ */
+    unsigned char ucStopBits;       /**< åœæ­¢ä½è®¾ç½® */
+    unsigned char ucWordBits;       /**< æ•°æ®ä½é•¿åº¦ */
+    unsigned char ucParityBits;     /**< æ ¡éªŒä½è®¾ç½® */
+    unsigned char ucUartKind;       /**< ä¸²å£ç±»å‹ */
+    unsigned char szRes[7];         /**< ä¿ç•™å­—èŠ‚ */
 } ST_SERIAL_INFO;
 
+// å‡è®¾ä½ æœ‰å¦‚ä¸‹éŸ¦æ ¹é…ç½®ç»“æ„ä½“
+typedef struct {
+    INT32U dwBitPulse;
+    INT32U dwBitInterval;
+    INT32U dwFrameInterval; // æ–°å¢å¸§é—´éš”å‚æ•°
+    // ...å…¶ä»–å‚æ•°...
+} WIEGAND_CONFIG_PARAM;
 
 /**
- * @brief ÏµÍ³²ÎÊıÖ÷½á¹¹Ìå 2048
+ * @brief ç³»ç»Ÿå‚æ•°ä¸»ç»“æ„ä½“ 2048
  */
 typedef struct
 {
-    ST_DEVICE_PARAM DeviceParam;     /**< Éè±¸²ÎÊı */
-    ST_NET_PARAM NetParam;           /**< ÍøÂç²ÎÊı */
-    ST_PRODUCT_INFO ProdectInfo;     /**< ²úÆ·ĞÅÏ¢ */
-    ST_UPDATE_INFO UpdateInfo;       /**< Éı¼¶ĞÅÏ¢ */
-    ST_SERIAL_INFO SerialParam;      /**< ´®¿Ú²ÎÊı */
+    unsigned char ucDeviceType;           // è®¾å¤‡ç±»å‹
+    ST_DEVICE_PARAM DeviceParam;     /**< è®¾å¤‡å‚æ•° */
+    ST_NET_PARAM NetParam;           /**< ç½‘ç»œå‚æ•° */
+    ST_PRODUCT_INFO ProdectInfo;     /**< äº§å“ä¿¡æ¯ */
+    ST_UPDATE_INFO UpdateInfo;       /**< å‡çº§ä¿¡æ¯ */
+    ST_SERIAL_INFO SerialParam;      /**< ä¸²å£å‚æ•° */
 
-    unsigned char szRes[1334];       /**< ±£Áô×Ö½Ú */
-    unsigned short usCrc;            /**< CRCĞ£ÑéÖµ */
+    WIEGAND_CONFIG_PARAM WiegandConfigParam; // æ–°å¢éŸ¦æ ¹é…ç½®å‚æ•°
+
+    unsigned char szRes[1333 - sizeof(WIEGAND_CONFIG_PARAM)]; // ä¿è¯æ€»å¤§å°ä¸å˜
+    unsigned short usCrc;
 } SysParams;
 
 #pragma pack()
 
 /**
- * @brief ÏµÍ³²ÎÊı²Ù×÷½Ó¿Ú
+ * @brief ç³»ç»Ÿå‚æ•°æ“ä½œæ¥å£
  */
 typedef struct
 {
-    /** »ñÈ¡ÏµÍ³²ÎÊıÖ¸Õë */
+    /** è·å–ç³»ç»Ÿå‚æ•°æŒ‡é’ˆ */
     int (*param_get)(SysParams **);
     
-    /** »ñÈ¡ÏµÍ³²ÎÊıÓ°×Ó¿½±´Ö¸Õë */
+    /** è·å–ç³»ç»Ÿå‚æ•°å½±å­æ‹·è´æŒ‡é’ˆ */
     int (*shadow_param_get)(SysParams **);
     
-    /** ½«ÏµÍ³²ÎÊı±£´æµ½Flash */
+    /** å°†ç³»ç»Ÿå‚æ•°ä¿å­˜åˆ°Flash */
     int (*save_to_flash)(void);
     
-    /** ´ÓFlash»Ö¸´ÏµÍ³²ÎÊı */
+    /** ä»Flashæ¢å¤ç³»ç»Ÿå‚æ•° */
     int (*recovery_from_flash)(void);
     
-    /** »Ö¸´Ä¬ÈÏÏµÍ³²ÎÊıÉèÖÃ
-     * @param type »Ö¸´ÀàĞÍ:
-     *            SYSPARAM_RECOVERY_FIRST - Ê×´Î»Ö¸´
-     *            SYSPARAM_RECOVERY_FACTORY - »Ö¸´³ö³§ÉèÖÃ
+    /** æ¢å¤é»˜è®¤ç³»ç»Ÿå‚æ•°è®¾ç½®
+     * @param type æ¢å¤ç±»å‹:
+     *            SYSPARAM_RECOVERY_FIRST - é¦–æ¬¡æ¢å¤
+     *            SYSPARAM_RECOVERY_FACTORY - æ¢å¤å‡ºå‚è®¾ç½®
      */
     void (*recovery_default_setting)(int);
 } ApiSysParamOps;
 
 /**
- * @brief ÏµÍ³²ÎÊıÎÄ¼şÃèÊö·û½á¹¹Ìå
+ * @brief ç³»ç»Ÿå‚æ•°æ–‡ä»¶æè¿°ç¬¦ç»“æ„ä½“
  */
 typedef struct
 {

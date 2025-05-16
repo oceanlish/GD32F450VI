@@ -8,7 +8,7 @@ static ST_RingBuff_Wiegand s_stRBuffWiegand = {0};
 
 /**
 * @brief			TcpServerBuff_Init
-* @detail			³õÊ¼»¯ÊÂ¼ş»º³åÇø
+* @detail			åˆå§‹åŒ–äº‹ä»¶ç¼“å†²åŒº
 * @return									
 */
 void WiegandBuff_Init(void)
@@ -20,9 +20,9 @@ void WiegandBuff_Init(void)
 
 /**
 * @brief			TcpServerBuff_Push
-* @detail			²åÈëÔªËØÖÁ»·ĞÎ»º³åÇø
-* @param[in]	pUnit: ²åÈëµÄµ¥Ôª
-* @return			0:²åÈë³É¹¦  ÆäËûÊ§°Ü								
+* @detail			æ’å…¥å…ƒç´ è‡³ç¯å½¢ç¼“å†²åŒº
+* @param[in]	pUnit: æ’å…¥çš„å•å…ƒ
+* @return			0:æ’å…¥æˆåŠŸ  å…¶ä»–å¤±è´¥								
 */
 int WiegandBuff_Push(void *pUnit)
 {
@@ -32,9 +32,9 @@ int WiegandBuff_Push(void *pUnit)
 
 /**
 * @brief			TcpServerBuff_Pop
-* @detail			´Ó»·ĞÎ»º³åÇø³ö¿Ú»ñÈ¡Ò»¸öµ¥Ôª£¬²¢ÒÆ³ı
-* @param[out]	pUnit: »ñÈ¡µÄµ¥Ôª
-* @return			0:³É¹¦  ÆäËûÊ§°Ü								
+* @detail			ä»ç¯å½¢ç¼“å†²åŒºå‡ºå£è·å–ä¸€ä¸ªå•å…ƒï¼Œå¹¶ç§»é™¤
+* @param[out]	pUnit: è·å–çš„å•å…ƒ
+* @return			0:æˆåŠŸ  å…¶ä»–å¤±è´¥								
 */
 int WiegandBuff_Pop(void *pUnit)
 {
@@ -43,9 +43,9 @@ int WiegandBuff_Pop(void *pUnit)
 
 /**
 * @brief			TcpServerBuff_GetFreeSize
-* @detail			»ñÈ¡»½ĞÑ»º³åÇøÊ£Óà¿Õ¼ä´óĞ¡
-* @param[out]	pUnit: »ñÈ¡µÄµ¥Ôª
-* @return			0:³É¹¦  ÆäËûÊ§°Ü								
+* @detail			è·å–å”¤é†’ç¼“å†²åŒºå‰©ä½™ç©ºé—´å¤§å°
+* @param[out]	pUnit: è·å–çš„å•å…ƒ
+* @return			0:æˆåŠŸ  å…¶ä»–å¤±è´¥								
 */
 int WiegandBuff_GetFreeSize(void)
 {
@@ -85,20 +85,20 @@ void Delay_100US(INT32U ncount)
 
 /*********************************************************************************************************
 ** Function name:       Wiegand_Send
-** Descriptions:        Î¤¸ù·¢ËÍ³ÌĞò
-** input parameters:    ÎŞ
-** Output parameters:   ÎŞ
-** Returned value:      ×¢Òâ´¦Àí×ÓµØÖ·Îª2×Ö½ÚµÄÇé¿ö¡£
+** Descriptions:        éŸ¦æ ¹å‘é€ç¨‹åº
+** input parameters:    æ— 
+** Output parameters:   æ— 
+** Returned value:      æ³¨æ„å¤„ç†å­åœ°å€ä¸º2å­—èŠ‚çš„æƒ…å†µã€‚
 *********************************************************************************************************/
 //int Wiegand26_Recv(INT8U* pData)
 //{
 //	SysTimerParams stWiegandTimer = {0};
 //	unsigned char wiegand_data[3] = {0};
 //	unsigned char k = 0,j = 0;
-//	unsigned char even = 0,even_tmp = 0;               //Î¤¸ù°üÇ° 12 Î»Å¼Ğ§Ñé
-//	unsigned char odd = 0,odd_tmp = 0;                //Î¤¸ù°üºó 12 Î»ÆëĞ§Ñé
-//	unsigned char check_temp = 0;         //Î¤¸ù°üÆæÅ¼Ğ§ÑéÖĞ¼äÔİ´æ
-//	unsigned char one_num = 0;            //¼ÆËã 1 µÄ¸öÊı
+//	unsigned char even = 0,even_tmp = 0;               //éŸ¦æ ¹åŒ…å‰ 12 ä½å¶æ•ˆéªŒ
+//	unsigned char odd = 0,odd_tmp = 0;                //éŸ¦æ ¹åŒ…å 12 ä½é½æ•ˆéªŒ
+//	unsigned char check_temp = 0;         //éŸ¦æ ¹åŒ…å¥‡å¶æ•ˆéªŒä¸­é—´æš‚å­˜
+//	unsigned char one_num = 0;            //è®¡ç®— 1 çš„ä¸ªæ•°
 //	char d0_value = 0,d1_value = 0;
 //	unsigned char count = 0;
 //	unsigned char flag = 0;
@@ -194,7 +194,7 @@ void Delay_100US(INT32U ncount)
 //	}
 //	OSSchedUnlock(&err);
 //	
-//	check_temp = wiegand_data[0];           //¼ÆËãÇ° 8 Î» 1 µÄ¸öÊı£¬ÎªÅ¼Ğ§ÑéÓÃ
+//	check_temp = wiegand_data[0];           //è®¡ç®—å‰ 8 ä½ 1 çš„ä¸ªæ•°ï¼Œä¸ºå¶æ•ˆéªŒç”¨
 
 //	for(k=0;k<8;k++)
 //	{
@@ -205,7 +205,7 @@ void Delay_100US(INT32U ncount)
 //		check_temp >>= 1;
 //	}
 
-//	check_temp = wiegand_data[1] >> 4;      //¼ÆËã½ÓÏÂÀ´µÄ 4 Î» 1 µÄ¸öÊı£¬ÎªÅ¼Ğ§ÑéÓÃ
+//	check_temp = wiegand_data[1] >> 4;      //è®¡ç®—æ¥ä¸‹æ¥çš„ 4 ä½ 1 çš„ä¸ªæ•°ï¼Œä¸ºå¶æ•ˆéªŒç”¨
 
 //	for(k=0;k<4;k++)
 //	{        
@@ -216,12 +216,12 @@ void Delay_100US(INT32U ncount)
 //		check_temp >>= 1;
 //	}
 
-//	one_num%2 == 0 ? (even = 0):( even = 1); //ÅĞ¶ÏÅ¼Ğ£Ñé 1 µÄ¸öÊı
+//	one_num%2 == 0 ? (even = 0):( even = 1); //åˆ¤æ–­å¶æ ¡éªŒ 1 çš„ä¸ªæ•°
 
 //	one_num = 0;
 //    
 
-//	check_temp = wiegand_data[1] & 0x0F;       //¼ÆËã½ÓÏÂÀ´µÄ 4 Î» 1 µÄ¸öÊı£¬ÎªÆæĞ§ÑéÓÃ
+//	check_temp = wiegand_data[1] & 0x0F;       //è®¡ç®—æ¥ä¸‹æ¥çš„ 4 ä½ 1 çš„ä¸ªæ•°ï¼Œä¸ºå¥‡æ•ˆéªŒç”¨
 //	for(k=0;k<4;k++)
 //	{
 //		if(check_temp&0x01)
@@ -232,7 +232,7 @@ void Delay_100US(INT32U ncount)
 //	}
 
 
-//	check_temp = wiegand_data[2];            //¼ÆËã½ÓÏÂÀ´µÄ 8 Î» 1 µÄ¸öÊı£¬ÎªÆæĞ§ÑéÓÃ
+//	check_temp = wiegand_data[2];            //è®¡ç®—æ¥ä¸‹æ¥çš„ 8 ä½ 1 çš„ä¸ªæ•°ï¼Œä¸ºå¥‡æ•ˆéªŒç”¨
 //	for(k=0;k<8;k++)
 //	{
 //		if(check_temp&0x01)
@@ -242,7 +242,7 @@ void Delay_100US(INT32U ncount)
 //		check_temp >>= 1;
 //	}
 
-//	one_num%2 == 0 ? (odd = 1):( odd = 0);   //ÅĞ¶ÏÆæĞ£Ñé 1 µÄ¸öÊı
+//	one_num%2 == 0 ? (odd = 1):( odd = 0);   //åˆ¤æ–­å¥‡æ ¡éªŒ 1 çš„ä¸ªæ•°
 //	one_num = 0;  
 //	
 //	if((even == even_tmp) && (odd == odd_tmp) && (memcmp(pData,wiegand_data,3) == 0))
@@ -257,10 +257,10 @@ void Delay_100US(INT32U ncount)
 
 /*********************************************************************************************************
 ** Function name:       Wiegand_Send
-** Descriptions:        Î¤¸ù·¢ËÍ³ÌĞò
-** input parameters:    ÎŞ
-** Output parameters:   ÎŞ
-** Returned value:      ×¢Òâ´¦Àí×ÓµØÖ·Îª2×Ö½ÚµÄÇé¿ö¡£
+** Descriptions:        éŸ¦æ ¹å‘é€ç¨‹åº
+** input parameters:    æ— 
+** Output parameters:   æ— 
+** Returned value:      æ³¨æ„å¤„ç†å­åœ°å€ä¸º2å­—èŠ‚çš„æƒ…å†µã€‚
 *********************************************************************************************************/
 void Wiegand26_Send(INT8U* pData) 
 {
@@ -269,13 +269,13 @@ void Wiegand26_Send(INT8U* pData)
 	g_stGlobeOps.sys_param_ops.param_get(&pstSysParams);
 	unsigned char wiegand_data[3] = {0};
 	unsigned char k = 0,j = 0;
-	unsigned char one_num = 0;            //¼ÆËã 1 µÄ¸öÊı
-	unsigned char check_temp = 0;         //Î¤¸ù°üÆæÅ¼Ğ§ÑéÖĞ¼äÔİ´æ
-	unsigned char even = 0;               //Î¤¸ù°üÇ° 12 Î»Å¼Ğ§Ñé
-	unsigned char odd = 0;                //Î¤¸ù°üºó 12 Î»ÆëĞ§Ñé
+	unsigned char one_num = 0;            //è®¡ç®— 1 çš„ä¸ªæ•°
+	unsigned char check_temp = 0;         //éŸ¦æ ¹åŒ…å¥‡å¶æ•ˆéªŒä¸­é—´æš‚å­˜
+	unsigned char even = 0;               //éŸ¦æ ¹åŒ…å‰ 12 ä½å¶æ•ˆéªŒ
+	unsigned char odd = 0;                //éŸ¦æ ¹åŒ…å 12 ä½é½æ•ˆéªŒ
 
 	memcpy(wiegand_data,pData,3);
-	check_temp = wiegand_data[0];           //¼ÆËãÇ° 8 Î» 1 µÄ¸öÊı£¬ÎªÅ¼Ğ§ÑéÓÃ
+	check_temp = wiegand_data[0];           //è®¡ç®—å‰ 8 ä½ 1 çš„ä¸ªæ•°ï¼Œä¸ºå¶æ•ˆéªŒç”¨
 
 	for(k=0;k<8;k++)
 	{
@@ -286,7 +286,7 @@ void Wiegand26_Send(INT8U* pData)
 		check_temp >>= 1;
 	}
 
-	check_temp = wiegand_data[1] >> 4;      //¼ÆËã½ÓÏÂÀ´µÄ 4 Î» 1 µÄ¸öÊı£¬ÎªÅ¼Ğ§ÑéÓÃ
+	check_temp = wiegand_data[1] >> 4;      //è®¡ç®—æ¥ä¸‹æ¥çš„ 4 ä½ 1 çš„ä¸ªæ•°ï¼Œä¸ºå¶æ•ˆéªŒç”¨
 
 	for(k=0;k<4;k++)
 	{        
@@ -297,12 +297,12 @@ void Wiegand26_Send(INT8U* pData)
 		check_temp >>= 1;
 	}
 
-	one_num%2 == 0 ? (even = 0):( even = 1); //ÅĞ¶ÏÅ¼Ğ£Ñé 1 µÄ¸öÊı
+	one_num%2 == 0 ? (even = 0):( even = 1); //åˆ¤æ–­å¶æ ¡éªŒ 1 çš„ä¸ªæ•°
 
 	one_num = 0;
     
 
-	check_temp = wiegand_data[1] & 0x0F;       //¼ÆËã½ÓÏÂÀ´µÄ 4 Î» 1 µÄ¸öÊı£¬ÎªÆæĞ§ÑéÓÃ
+	check_temp = wiegand_data[1] & 0x0F;       //è®¡ç®—æ¥ä¸‹æ¥çš„ 4 ä½ 1 çš„ä¸ªæ•°ï¼Œä¸ºå¥‡æ•ˆéªŒç”¨
 	for(k=0;k<4;k++)
 	{
 		if(check_temp&0x01)
@@ -313,7 +313,7 @@ void Wiegand26_Send(INT8U* pData)
 	}
 
 
-	check_temp = wiegand_data[2];            //¼ÆËã½ÓÏÂÀ´µÄ 8 Î» 1 µÄ¸öÊı£¬ÎªÆæĞ§ÑéÓÃ
+	check_temp = wiegand_data[2];            //è®¡ç®—æ¥ä¸‹æ¥çš„ 8 ä½ 1 çš„ä¸ªæ•°ï¼Œä¸ºå¥‡æ•ˆéªŒç”¨
 	for(k=0;k<8;k++)
 	{
 		if(check_temp&0x01)
@@ -323,49 +323,49 @@ void Wiegand26_Send(INT8U* pData)
 		check_temp >>= 1;
 	}
 
-	one_num%2 == 0 ? (odd = 1):( odd = 0);   //ÅĞ¶ÏÆæĞ£Ñé 1 µÄ¸öÊı
+	one_num%2 == 0 ? (odd = 1):( odd = 0);   //åˆ¤æ–­å¥‡æ ¡éªŒ 1 çš„ä¸ªæ•°
 	one_num = 0;                                
       
-//-------------------------------------------------------------------------·¢ËÍÅ¼Ğ§ÑéÎ»
+//-------------------------------------------------------------------------å‘é€å¶æ•ˆéªŒä½
 	OSSchedLock(&err);
 	g_stGlobeOps.cri_ops.enter_critical();
 
-	Wiegand_D0_High() ;//Î¤¸ùÊä³ö¶Ë³õÊ¼»¯
+	Wiegand_D0_High() ;//éŸ¦æ ¹è¾“å‡ºç«¯åˆå§‹åŒ–
 	Wiegand_D1_High() ;
 	if(even)
 	{
 		Wiegand_D1_Low();
-		Delay_10US(pstSysParams->WiegandConfigParam.dwBitPulse);       //µçÆ½À­µÍTlowÊ±¼ä,ÓÉÓÚ¹âñîÓĞÍÏÎ²£¬¹Ê¼õÈ¥50usÊ±¼ä
+		Delay_10US(pstSysParams->WiegandConfigParam.dwBitPulse);       //ç”µå¹³æ‹‰ä½Tlowæ—¶é—´,ç”±äºå…‰è€¦æœ‰æ‹–å°¾ï¼Œæ•…å‡å»50usæ—¶é—´
 		Wiegand_D1_High();
 	}
 	else
 	{
 		Wiegand_D0_Low();
-		Delay_10US(pstSysParams->WiegandConfigParam.dwBitPulse);      //µçÆ½À­µÍ.....
+		Delay_10US(pstSysParams->WiegandConfigParam.dwBitPulse);      //ç”µå¹³æ‹‰ä½.....
 		Wiegand_D0_High();
 	}
 
 	Delay_100US(pstSysParams->WiegandConfigParam.dwBitInterval);
 	
 
-//------------------------------------------------------------------------·¢ËÍ24Î»Êı¾İ
+//------------------------------------------------------------------------å‘é€24ä½æ•°æ®
 	for(j=0;j<3;j++) 
 	{ 
 		for(k = 0;k<8;k++)
 		{
-			Wiegand_D0_High() ;//Î¤¸ùÊä³ö¶Ë³õÊ¼»¯
+			Wiegand_D0_High() ;//éŸ¦æ ¹è¾“å‡ºç«¯åˆå§‹åŒ–
 			Wiegand_D1_High() ;   
 
 			if((wiegand_data[j])&0x80)
 			{
 				Wiegand_D1_Low();
-				Delay_10US(pstSysParams->WiegandConfigParam.dwBitPulse);     //µçÆ½À­µÍ
+				Delay_10US(pstSysParams->WiegandConfigParam.dwBitPulse);     //ç”µå¹³æ‹‰ä½
 				Wiegand_D1_High();
 			}
 			else
 			{
 				Wiegand_D0_Low();
-				Delay_10US(pstSysParams->WiegandConfigParam.dwBitPulse);     //µçÆ½À­µÍ
+				Delay_10US(pstSysParams->WiegandConfigParam.dwBitPulse);     //ç”µå¹³æ‹‰ä½
 				Wiegand_D0_High();
 			}
 
@@ -375,20 +375,20 @@ void Wiegand26_Send(INT8U* pData)
 
 		}
 	}
-//------------------------------------------------------------------------·¢ËÍÆæĞ§ÑéÎ»
-	Wiegand_D0_High() ;//Î¤¸ùÊä³ö¶Ë³õÊ¼»¯
+//------------------------------------------------------------------------å‘é€å¥‡æ•ˆéªŒä½
+	Wiegand_D0_High() ;//éŸ¦æ ¹è¾“å‡ºç«¯åˆå§‹åŒ–
 	Wiegand_D1_High() ;
 
 	if(odd)
 	{
 		Wiegand_D1_Low();
-		Delay_10US(pstSysParams->WiegandConfigParam.dwBitPulse);     //µçÆ½À­µÍ
+		Delay_10US(pstSysParams->WiegandConfigParam.dwBitPulse);     //ç”µå¹³æ‹‰ä½
 		Wiegand_D1_High();
 	}
 	else
 	{
 		Wiegand_D0_Low();
-		Delay_10US(pstSysParams->WiegandConfigParam.dwBitPulse);     //µçÆ½À­µÍ
+		Delay_10US(pstSysParams->WiegandConfigParam.dwBitPulse);     //ç”µå¹³æ‹‰ä½
 		Wiegand_D0_High();
 	}
 	
@@ -396,7 +396,7 @@ void Wiegand26_Send(INT8U* pData)
 	OSSchedUnlock(&err);
 	
 	Delay_100US(pstSysParams->WiegandConfigParam.dwBitInterval);
-	Wiegand_D0_High() ;//Î¤¸ùÊä³ö¶Ë³õÊ¼»¯
+	Wiegand_D0_High() ;//éŸ¦æ ¹è¾“å‡ºç«¯åˆå§‹åŒ–
 	Wiegand_D1_High() ;
 	OSTimeDlyHMSM(0,0,pstSysParams->WiegandConfigParam.dwFrameInterval/1000,pstSysParams->WiegandConfigParam.dwFrameInterval%1000, OS_OPT_TIME_PERIODIC, &err);
 
@@ -405,10 +405,10 @@ void Wiegand26_Send(INT8U* pData)
 
 /*********************************************************************************************************
 ** Function name:       Wiegand34_Send
-** Descriptions:        Î¤¸ù·¢ËÍ³ÌĞò
-** input parameters:    ÎŞ
-** Output parameters:   ÎŞ
-** Returned value:      ×¢Òâ´¦Àí×ÓµØÖ·Îª2×Ö½ÚµÄÇé¿ö¡£
+** Descriptions:        éŸ¦æ ¹å‘é€ç¨‹åº
+** input parameters:    æ— 
+** Output parameters:   æ— 
+** Returned value:      æ³¨æ„å¤„ç†å­åœ°å€ä¸º2å­—èŠ‚çš„æƒ…å†µã€‚
 *********************************************************************************************************/
 void Wiegand34_Send(INT8U* pData) 
 {
@@ -417,14 +417,14 @@ void Wiegand34_Send(INT8U* pData)
 	g_stGlobeOps.sys_param_ops.param_get(&pstSysParams);
 	unsigned char wiegand_data[4] = {0};
 	unsigned char k = 0,j = 0;
-	unsigned char one_num = 0;            //¼ÆËã 1 µÄ¸öÊı
-	unsigned char check_temp = 0;         //Î¤¸ù°üÆæÅ¼Ğ§ÑéÖĞ¼äÔİ´æ
-	unsigned char even = 0;               //Î¤¸ù°üÇ° 12 Î»Å¼Ğ§Ñé
-	unsigned char odd = 0;                //Î¤¸ù°üºó 12 Î»ÆëĞ§Ñé
+	unsigned char one_num = 0;            //è®¡ç®— 1 çš„ä¸ªæ•°
+	unsigned char check_temp = 0;         //éŸ¦æ ¹åŒ…å¥‡å¶æ•ˆéªŒä¸­é—´æš‚å­˜
+	unsigned char even = 0;               //éŸ¦æ ¹åŒ…å‰ 12 ä½å¶æ•ˆéªŒ
+	unsigned char odd = 0;                //éŸ¦æ ¹åŒ…å 12 ä½é½æ•ˆéªŒ
 	
 	memcpy(wiegand_data,pData,4);
 	
-	check_temp = wiegand_data[0];           //¼ÆËãÇ° 8 Î» 1 µÄ¸öÊı£¬ÎªÅ¼Ğ§ÑéÓÃ
+	check_temp = wiegand_data[0];           //è®¡ç®—å‰ 8 ä½ 1 çš„ä¸ªæ•°ï¼Œä¸ºå¶æ•ˆéªŒç”¨
 	for(k=0;k<8;k++)
 	{
 		if(check_temp&0x01)
@@ -434,7 +434,7 @@ void Wiegand34_Send(INT8U* pData)
 		check_temp >>= 1;
 	}
 
-	check_temp = wiegand_data[1];      //¼ÆËã½ÓÏÂÀ´µÄ 8Î» 1 µÄ¸öÊı£¬ÎªÅ¼Ğ§ÑéÓÃ
+	check_temp = wiegand_data[1];      //è®¡ç®—æ¥ä¸‹æ¥çš„ 8ä½ 1 çš„ä¸ªæ•°ï¼Œä¸ºå¶æ•ˆéªŒç”¨
 	for(k=0;k<8;k++)
 	{        
 		if(check_temp&0x01)
@@ -444,12 +444,12 @@ void Wiegand34_Send(INT8U* pData)
 		check_temp >>= 1;
 	}
 
-	one_num%2 == 0 ? (even = 0):( even = 1); //ÅĞ¶ÏÅ¼Ğ£Ñé 1 µÄ¸öÊı
+	one_num%2 == 0 ? (even = 0):( even = 1); //åˆ¤æ–­å¶æ ¡éªŒ 1 çš„ä¸ªæ•°
 
 	one_num = 0;
 
 
-	check_temp = wiegand_data[2];       //¼ÆËã½ÓÏÂÀ´µÄ 4 Î» 1 µÄ¸öÊı£¬ÎªÆæĞ§ÑéÓÃ
+	check_temp = wiegand_data[2];       //è®¡ç®—æ¥ä¸‹æ¥çš„ 4 ä½ 1 çš„ä¸ªæ•°ï¼Œä¸ºå¥‡æ•ˆéªŒç”¨
 	for(k=0;k<8;k++)
 	{
 		if(check_temp&0x01)
@@ -460,7 +460,7 @@ void Wiegand34_Send(INT8U* pData)
 	}
 
 
-	check_temp = wiegand_data[3];            //¼ÆËã½ÓÏÂÀ´µÄ 8 Î» 1 µÄ¸öÊı£¬ÎªÆæĞ§ÑéÓÃ
+	check_temp = wiegand_data[3];            //è®¡ç®—æ¥ä¸‹æ¥çš„ 8 ä½ 1 çš„ä¸ªæ•°ï¼Œä¸ºå¥‡æ•ˆéªŒç”¨
 	for(k=0;k<8;k++)
 	{
 		if(check_temp&0x01)
@@ -470,47 +470,47 @@ void Wiegand34_Send(INT8U* pData)
 		check_temp >>= 1;
 	}
 
-	one_num%2 == 0 ? (odd = 1):( odd = 0);   //ÅĞ¶ÏÆæĞ£Ñé 1 µÄ¸öÊı
+	one_num%2 == 0 ? (odd = 1):( odd = 0);   //åˆ¤æ–­å¥‡æ ¡éªŒ 1 çš„ä¸ªæ•°
 	one_num = 0;                                
 
-//-------------------------------------------------------------------------·¢ËÍÅ¼Ğ§ÑéÎ»
+//-------------------------------------------------------------------------å‘é€å¶æ•ˆéªŒä½
 	OSSchedLock(&err);
 	g_stGlobeOps.cri_ops.enter_critical();
-	Wiegand_D0_High() ;//Î¤¸ùÊä³ö¶Ë³õÊ¼»¯
+	Wiegand_D0_High() ;//éŸ¦æ ¹è¾“å‡ºç«¯åˆå§‹åŒ–
 	Wiegand_D1_High() ;
 	if(even)
 	{
 		Wiegand_D1_Low();
-		Delay_10US(pstSysParams->WiegandConfigParam.dwBitPulse);       //µçÆ½À­µÍTlowÊ±¼ä,ÓÉÓÚ¹âñîÓĞÍÏÎ²£¬¹Ê¼õÈ¥50usÊ±¼ä
+		Delay_10US(pstSysParams->WiegandConfigParam.dwBitPulse);       //ç”µå¹³æ‹‰ä½Tlowæ—¶é—´,ç”±äºå…‰è€¦æœ‰æ‹–å°¾ï¼Œæ•…å‡å»50usæ—¶é—´
 		Wiegand_D1_High();
 	}
 	else
 	{
 		Wiegand_D0_Low();
-		Delay_10US(pstSysParams->WiegandConfigParam.dwBitPulse);      //µçÆ½À­µÍ.....
+		Delay_10US(pstSysParams->WiegandConfigParam.dwBitPulse);      //ç”µå¹³æ‹‰ä½.....
 		Wiegand_D0_High();
 	}
 
 	Delay_100US(pstSysParams->WiegandConfigParam.dwBitInterval); 
 
-	//------------------------------------------------------------------------·¢ËÍ32Î»Êı¾İ
+	//------------------------------------------------------------------------å‘é€32ä½æ•°æ®
 	for(j=0;j<4;j++) 
 	{
 		for(k = 0;k<8;k++)
 		{
-			Wiegand_D0_High() ;//Î¤¸ùÊä³ö¶Ë³õÊ¼»¯
+			Wiegand_D0_High() ;//éŸ¦æ ¹è¾“å‡ºç«¯åˆå§‹åŒ–
 			Wiegand_D1_High() ;   
 
 			if((wiegand_data[j])&0x80)
 			{
 				Wiegand_D1_Low();
-				Delay_10US(pstSysParams->WiegandConfigParam.dwBitPulse);   //µçÆ½À­µÍ
+				Delay_10US(pstSysParams->WiegandConfigParam.dwBitPulse);   //ç”µå¹³æ‹‰ä½
 				Wiegand_D1_High();
 			}
 			else
 			{
 				Wiegand_D0_Low();
-				Delay_10US(pstSysParams->WiegandConfigParam.dwBitPulse);     //µçÆ½À­µÍ
+				Delay_10US(pstSysParams->WiegandConfigParam.dwBitPulse);     //ç”µå¹³æ‹‰ä½
 				Wiegand_D0_High();
 			}
 			wiegand_data[j] <<= 1;
@@ -518,25 +518,25 @@ void Wiegand34_Send(INT8U* pData)
 
 		}
 	}
-	//------------------------------------------------------------------------·¢ËÍÆæĞ§ÑéÎ»
-	Wiegand_D0_High() ;//Î¤¸ùÊä³ö¶Ë³õÊ¼»¯
+	//------------------------------------------------------------------------å‘é€å¥‡æ•ˆéªŒä½
+	Wiegand_D0_High() ;//éŸ¦æ ¹è¾“å‡ºç«¯åˆå§‹åŒ–
 	Wiegand_D1_High() ;
 	if(odd)
 	{
 		Wiegand_D1_Low();
-		Delay_10US(pstSysParams->WiegandConfigParam.dwBitPulse);     //µçÆ½À­µÍ
+		Delay_10US(pstSysParams->WiegandConfigParam.dwBitPulse);     //ç”µå¹³æ‹‰ä½
 		Wiegand_D1_High();
 	}
 	else
 	{
 		Wiegand_D0_Low();
-		Delay_10US(pstSysParams->WiegandConfigParam.dwBitPulse);     //µçÆ½À­µÍ
+		Delay_10US(pstSysParams->WiegandConfigParam.dwBitPulse);     //ç”µå¹³æ‹‰ä½
 		Wiegand_D0_High();
 	}
 	g_stGlobeOps.cri_ops.exit_critical(0);
 	OSSchedUnlock(&err);
 	Delay_100US(pstSysParams->WiegandConfigParam.dwBitInterval); 
-	Wiegand_D0_High();//Î¤¸ùÊä³ö¶Ë³õÊ¼»¯
+	Wiegand_D0_High();//éŸ¦æ ¹è¾“å‡ºç«¯åˆå§‹åŒ–
 	Wiegand_D1_High();
 	OSTimeDlyHMSM(0,0,pstSysParams->WiegandConfigParam.dwFrameInterval/1000,pstSysParams->WiegandConfigParam.dwFrameInterval%1000, OS_OPT_TIME_PERIODIC, &err);
 

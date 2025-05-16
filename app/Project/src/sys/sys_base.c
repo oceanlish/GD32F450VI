@@ -98,7 +98,7 @@ static void DispTaskInfo(void)
     p_tcb = OSTaskDbgListPtr;
     g_stGlobeOps.cri_ops.exit_critical(cpu_sr);
     DbgLog(DBG_CPU_USAGE, DBG_DETAIL, DBG_COLOR_NULL, DBG_TS_EN, "===============================================================\r\n");
-    DbgLog(DBG_CPU_USAGE, DBG_DETAIL, DBG_COLOR_NULL, DBG_TS_EN, " 优先级 使用栈 剩余栈 百分比 利用率   任务名\r\n");
+    // DbgLog(DBG_CPU_USAGE, DBG_DETAIL, DBG_COLOR_NULL, DBG_TS_EN, " 优先级 使用栈 剩余栈 百分比 利用率   任务名\r\n");
     DbgLog(DBG_CPU_USAGE, DBG_DETAIL, DBG_COLOR_NULL, DBG_TS_EN, "  Prio   Used  Free   Per    CPU     Taskname\r\n");
     while (p_tcb != (OS_TCB *)0)
     {
@@ -182,7 +182,7 @@ static void Sys_WdtFeed(void)
 /**
  * @brief 模块复位操作
  */
-static void Sys_ModuleReset(void)
+void Sys_ModuleReset(void)
 {
     ApiGpioCtl stIoCtl;
     stIoCtl.ctl_code = GPIO_CTL_PWM;

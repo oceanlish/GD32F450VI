@@ -1,6 +1,6 @@
 /*!
  * @file  telnet.c
- * @brief Telnet·şÎñÊµÏÖÎÄ¼ş
+ * @brief TelnetæœåŠ¡å®ç°æ–‡ä»¶
  */
 #include "main.h"
 #include "telnet.h"
@@ -9,103 +9,99 @@
 #include <string.h>
 #include "llif_record.h"
 
-/* TelnetÃüÁîÏà¹Øºê¶¨Òå */
-#define MAX_TELNET_CMD_SIZE       50     // µ¥ÌõTelnetÃüÁî×î´ó³¤¶È
-#define MAX_TELNET_CMD_BUFF_LEN   10     // TelnetÃüÁî»º´æÌõÊı
+// Telnetç™»å½•çŠ¶æ€å®šä¹‰
+#define TELNET_LOGIN_SUCCESS      1      // ç™»å½•æˆåŠŸ
+#define TELNET_LOGIN_FAIL         0      // ç™»å½•å¤±è´¥
 
-// TelnetµÇÂ¼×´Ì¬¶¨Òå
-#define TELNET_LOGIN_SUCCESS      1      // µÇÂ¼³É¹¦
-#define TELNET_LOGIN_FAIL         0      // µÇÂ¼Ê§°Ü
+// Telnetç™»å½•é˜¶æ®µå®šä¹‰
+#define TELNET_USR                0      // ç”¨æˆ·åé˜¶æ®µ
+#define TELNET_PWD                1      // å¯†ç é˜¶æ®µ
 
-// TelnetµÇÂ¼½×¶Î¶¨Òå
-#define TELNET_USR                0      // ÓÃ»§Ãû½×¶Î
-#define TELNET_PWD                1      // ÃÜÂë½×¶Î
+// Telnetåå•†å‘½ä»¤çŠ¶æ€å®šä¹‰
+#define TELNET_DOECHO_CMD         0      // DO ECHOå‘½ä»¤çŠ¶æ€
+#define TELNET_WINSIZE_CMD        1      // çª—å£å¤§å°åå•†å‘½ä»¤çŠ¶æ€
+#define TELNET_FLOWCTL_CMD        2      // æµæ§åˆ¶åå•†å‘½ä»¤çŠ¶æ€
+#define TELNET_WILLECHO_CMD       3      // WILL ECHOå‘½ä»¤çŠ¶æ€
+#define TELNET_DOSUPPRESS_CMD     4      // DO SUPPRESS GO AHEADå‘½ä»¤çŠ¶æ€
+#define TELNET_CMD_END            99     // å‘½ä»¤åå•†ç»“æŸçŠ¶æ€
 
-// TelnetĞ­ÉÌÃüÁî×´Ì¬¶¨Òå
-#define TELNET_DOECHO_CMD         0      // DO ECHOÃüÁî×´Ì¬
-#define TELNET_WINSIZE_CMD        1      // ´°¿Ú´óĞ¡Ğ­ÉÌÃüÁî×´Ì¬
-#define TELNET_FLOWCTL_CMD        2      // Á÷¿ØÖÆĞ­ÉÌÃüÁî×´Ì¬
-#define TELNET_WILLECHO_CMD       3      // WILL ECHOÃüÁî×´Ì¬
-#define TELNET_DOSUPPRESS_CMD     4      // DO SUPPRESS GO AHEADÃüÁî×´Ì¬
-#define TELNET_CMD_END            99     // ÃüÁîĞ­ÉÌ½áÊø×´Ì¬
+INT8U g_ucTelnetCmdState = TELNET_DOECHO_CMD;  // Telnetå‘½ä»¤åå•†çŠ¶æ€,åˆå§‹ä¸ºDOECHOå‘½ä»¤çŠ¶æ€
+INT8U g_ucNeedEchoPrompt = 0;                  // æ˜¯å¦éœ€è¦æ˜¾ç¤ºå‘½ä»¤æç¤ºç¬¦æ ‡å¿—,0-ä¸éœ€è¦,1-éœ€è¦
+INT8U g_ucLogSuspend = 0;                      // æ—¥å¿—è¾“å‡ºæš‚åœæ ‡å¿—,0-ä¸æš‚åœ,1-æš‚åœ
+INT32U g_dwLastTelnetTabRevSysCnt = 0;         // æœ€è¿‘ä¸€æ¬¡æ¥æ”¶Tabé”®çš„ç³»ç»Ÿæ—¶é—´
+static int s_ping_sem;                         // pingå‘½ä»¤ä½¿ç”¨çš„ä¿¡å·é‡ 
 
-INT8U g_ucTelnetCmdState = TELNET_DOECHO_CMD;  // TelnetÃüÁîĞ­ÉÌ×´Ì¬,³õÊ¼ÎªDOECHOÃüÁî×´Ì¬
-INT8U g_ucNeedEchoPrompt = 0;                  // ÊÇ·ñĞèÒªÏÔÊ¾ÃüÁîÌáÊ¾·û±êÖ¾,0-²»ĞèÒª,1-ĞèÒª
-INT8U g_ucLogSuspend = 0;                      // ÈÕÖ¾Êä³öÔİÍ£±êÖ¾,0-²»ÔİÍ£,1-ÔİÍ£
-INT32U g_dwLastTelnetTabRevSysCnt = 0;         // ×î½üÒ»´Î½ÓÊÕTab¼üµÄÏµÍ³Ê±¼ä
-static int s_ping_sem;                         // pingÃüÁîÊ¹ÓÃµÄĞÅºÅÁ¿ 
-
-// Telnet Cmd ÕâĞ©ÃüÁîÔÚTelnet»á»°½¨Á¢¹ı³ÌÖĞÓÃÓÚĞ­ÉÌÁ¬½Ó²ÎÊı£¬ÈçÊÇ·ñÆôÓÃ»ØÏÔ¡¢´°¿Ú´óĞ¡¡¢Á÷¿ØÖÆµÈ¹¦ÄÜ¡£
+// Telnet Cmd è¿™äº›å‘½ä»¤åœ¨Telnetä¼šè¯å»ºç«‹è¿‡ç¨‹ä¸­ç”¨äºåå•†è¿æ¥å‚æ•°, å¦‚æ˜¯å¦å¯ç”¨å›æ˜¾ã€çª—å£å¤§å°ã€æµæ§åˆ¶ç­‰åŠŸèƒ½ã€‚
 char g_szTelnetDoEchoCmd[3] = {0xFF, 0xFD, 0x01};     /* command: Do Echo                         FF FD 01 */
 char g_szTelnetWinSizeCmd[3] = {0xFF, 0xFD, 0x1F};    /* command: Do Negotiate About window Size  FF FD 1F */
 char g_szTelnetFlowCtlCmd[3] = {0xFF, 0xFD, 0x21};    /* command: Do Remote Flow Control          FF FD 21 */
 char g_szTelnetWillEchoCmd[3] = {0xFF, 0xFB, 0x01};   /*command: Will Echo                        FF FB 01 */
 char g_szTelnetDoSuppressCmd[3] = {0xFF, 0xFB, 0x03}; /*command: Do Suppress Go Ahead             FF FB 03 */
 
-TELNET_USR_INFO g_stTelnetUsrInfo;        // TelnetÓÃ»§ĞÅÏ¢½á¹¹Ìå
-TELNET_CMD_LINKLIST g_stTelnetCmdList;    // TelnetÃüÁîÁ´±í½á¹¹Ìå,ÓÃÓÚ´æ´¢ÀúÊ·ÃüÁî
+TELNET_USR_INFO g_stTelnetUsrInfo;        // Telnetç”¨æˆ·ä¿¡æ¯ç»“æ„ä½“
+TELNET_CMD_LINKLIST g_stTelnetCmdList;    // Telnetå‘½ä»¤é“¾è¡¨ç»“æ„ä½“,ç”¨äºå­˜å‚¨å†å²å‘½ä»¤
 
-struct tcp_pcb *g_PCB_Telnet_p = NULL;    // Telnet TCP¿ØÖÆ¿éÖ¸Õë
-char g_szTelnetSndBuf[1500] = {0};        // Telnet·¢ËÍ»º³åÇø
-char g_szTelnetCmdBuf[MAX_TELNET_CMD_SIZE] = {0};  // TelnetÃüÁî»º³åÇø
+struct tcp_pcb *g_PCB_Telnet_p = NULL;    // Telnet TCPæ§åˆ¶å—æŒ‡é’ˆ
+char g_szTelnetSndBuf[1500] = {0};        // Telnetå‘é€ç¼“å†²åŒº
+char g_szTelnetCmdBuf[MAX_TELNET_CMD_SIZE] = {0};  // Telnetå‘½ä»¤ç¼“å†²åŒº
 
-DbgLogMsgBuff g_stDbgLogMsgBuff;          // µ÷ÊÔÈÕÖ¾ÏûÏ¢»º³åÇø
+DbgLogMsgBuff g_stDbgLogMsgBuff;          // è°ƒè¯•æ—¥å¿—æ¶ˆæ¯ç¼“å†²åŒº
 
-INT32U g_dwTelnetKeepAliveTmr = 0;        // Telnet±£»î¶¨Ê±Æ÷
-INT32U g_dwTelnetLoginTmr = 0;            // TelnetµÇÂ¼¶¨Ê±Æ÷
-INT8U g_ucTelnetDbgFlg = DBG_NULL;        // Telnetµ÷ÊÔ±êÖ¾
-INT8U g_ucTelnetPollNeedShutDownTcp = 0;  // TelnetÂÖÑ¯ÊÇ·ñĞèÒª¹Ø±ÕTCPÁ¬½Ó±êÖ¾
-INT8U g_ucTelnetCmdFlg = 0;               // TelnetÃüÁî±êÖ¾
-INT8U g_szTelnetCmdRevCnt = 0;            // TelnetÒÑ½ÓÊÕÃüÁî×Ö·û¼ÆÊı
+INT32U g_dwTelnetKeepAliveTmr = 0;        // Telnetä¿æ´»å®šæ—¶å™¨
+INT32U g_dwTelnetLoginTmr = 0;            // Telnetç™»å½•å®šæ—¶å™¨
+INT8U g_ucTelnetDbgFlg = DBG_NULL;        // Telnetè°ƒè¯•æ ‡å¿—
+INT8U g_ucTelnetPollNeedShutDownTcp = 0;  // Telnetè½®è¯¢æ˜¯å¦éœ€è¦å…³é—­TCPè¿æ¥æ ‡å¿—
+INT8U g_ucTelnetCmdFlg = 0;               // Telnetå‘½ä»¤æ ‡å¿—
+INT8U g_szTelnetCmdRevCnt = 0;            // Telnetå·²æ¥æ”¶å‘½ä»¤å­—ç¬¦è®¡æ•°
 
-ip_addr_t _s_ipaddr;                     // pingÄ¿±êIPµØÖ·´æ´¢            
+ip_addr_t _s_ipaddr;                     // pingç›®æ ‡IPåœ°å€å­˜å‚¨            
 ip_addr_t *pingipaddr = &_s_ipaddr;
-struct raw_pcb *ping_pcb;                // ping¹¦ÄÜÊ¹ÓÃµÄICMPÔ­Ê¼Ì×½Ó×Ö¿ØÖÆ¿é
-uint32_t g_dwSysTimeNow = 0;             // ¼ÇÂ¼ping·¢ËÍÊ±µÄÏµÍ³Ê±¼ä,ÓÃÓÚ¼ÆËãÍù·µÊ±ÑÓ
-uint32_t g_dwPingCnt = 0;                // Ê£ÓàĞèÒª·¢ËÍµÄping°üÊıÁ¿
-#define PING_SND_NUM 4                   // Ã¿´ÎpingÃüÁîÄ¬ÈÏ·¢ËÍµÄICMP»ØÏÔÇëÇó°üÊıÁ¿
+struct raw_pcb *ping_pcb;                // pingåŠŸèƒ½ä½¿ç”¨çš„ICMPåŸå§‹å¥—æ¥å­—æ§åˆ¶å—
+uint32_t g_dwSysTimeNow = 0;             // è®°å½•pingå‘é€æ—¶çš„ç³»ç»Ÿæ—¶é—´,ç”¨äºè®¡ç®—å¾€è¿”æ—¶å»¶
+uint32_t g_dwPingCnt = 0;                // å‰©ä½™éœ€è¦å‘é€çš„pingåŒ…æ•°é‡
+#define PING_SND_NUM 4                   // æ¯æ¬¡pingå‘½ä»¤é»˜è®¤å‘é€çš„ICMPå›æ˜¾è¯·æ±‚åŒ…æ•°é‡
 
 /**
- * @brief ·¢ËÍping°ü
- * @param pcb ICMP¿ØÖÆ¿é
- * @param ipaddr Ä¿±êIPµØÖ·
+ * @brief å‘é€pingåŒ…
+ * @param pcb ICMPæ§åˆ¶å—
+ * @param ipaddr ç›®æ ‡IPåœ°å€
  */
 void ping_send(struct raw_pcb *pcb, ip_addr_t *ipaddr);
 
 /**
- * @brief ÏÔÊ¾TelnetÃüÁîÌáÊ¾·û
- * @param pcb TCP¿ØÖÆ¿éÖ¸Õë
- * @param cmd ÒÑÊäÈëµÄÃüÁî×Ö·û´®,ÎªNULLÊ±Ö»ÏÔÊ¾ÌáÊ¾·û
+ * @brief æ˜¾ç¤ºTelnetå‘½ä»¤æç¤ºç¬¦
+ * @param pcb TCPæ§åˆ¶å—æŒ‡é’ˆ
+ * @param cmd å·²è¾“å…¥çš„å‘½ä»¤å­—ç¬¦ä¸²,ä¸ºNULLæ—¶åªæ˜¾ç¤ºæç¤ºç¬¦
  * 
- * ¸Ãº¯ÊıÓÃÓÚÔÚTelnetÖÕ¶ËÏÔÊ¾ÃüÁîÌáÊ¾·û,¸ñÊ½Îª:[ÓÃ»§Ãû@²úÆ·Ãû ~]$
- * ÌáÊ¾·ûÖĞ°üº¬ANSI×ªÒåĞòÁĞÓÃÓÚÉèÖÃÑÕÉ«:
- * - ESC[1;32m ÉèÖÃÎªÁÁÂÌÉ«
- * - ESC[0;37m »Ö¸´ÎªÄ¬ÈÏ°×É«
+ * è¯¥å‡½æ•°ç”¨äºåœ¨Telnetç»ˆç«¯æ˜¾ç¤ºå‘½ä»¤æç¤ºç¬¦,æ ¼å¼ä¸º:[ç”¨æˆ·å@äº§å“å ~]$
+ * æç¤ºç¬¦ä¸­åŒ…å«ANSIè½¬ä¹‰åºåˆ—ç”¨äºè®¾ç½®é¢œè‰²:
+ * - ESC[1;32m è®¾ç½®ä¸ºäº®ç»¿è‰²
+ * - ESC[0;37m æ¢å¤ä¸ºé»˜è®¤ç™½è‰²
  */
 void Telnet_Display_Cmd_Prompt(struct tcp_pcb *pcb, char *cmd)
 {
     unsigned short usStrLen = 0;
     SysParams *pstSysParams = NULL;
-    // »ñÈ¡ÏµÍ³²ÎÊı
+    // è·å–ç³»ç»Ÿå‚æ•°
     g_stGlobeOps.sys_param_ops.param_get(&pstSysParams);
     if (cmd == NULL)
     {
-        // ½öÏÔÊ¾ÌáÊ¾·û
+        // ä»…æ˜¾ç¤ºæç¤ºç¬¦
         usStrLen = sprintf(g_szTelnetSndBuf, "\r\n[%s@%s %c[1;32m~%c[0;37m]$", g_stTelnetUsrInfo.szUsr, pstSysParams->ProdectInfo.szProductName, ESC, ESC);
     }
     else
     {
-        // ÏÔÊ¾ÌáÊ¾·ûºÍÒÑÊäÈëµÄÃüÁî
+        // æ˜¾ç¤ºæç¤ºç¬¦å’Œå·²è¾“å…¥çš„å‘½ä»¤
         usStrLen = sprintf(g_szTelnetSndBuf, "\r\n[%s@%s %c[1;32m~%c[0;37m]$%s", g_stTelnetUsrInfo.szUsr, pstSysParams->ProdectInfo.szProductName, ESC, ESC, cmd);
     }
-    // Í¨¹ıTCP·¢ËÍÌáÊ¾·û
+    // é€šè¿‡TCPå‘é€æç¤ºç¬¦
     tcp_write(pcb, g_szTelnetSndBuf, usStrLen, TCP_WRITE_FLAG_COPY);
 }
 
 /**
- * @brief pingĞÅºÅÁ¿µÈ´ı
- * @param iTo ³¬Ê±Ê±¼ä
- * @return µÈ´ı½á¹û
+ * @brief pingä¿¡å·é‡ç­‰å¾…
+ * @param iTo è¶…æ—¶æ—¶é—´
+ * @return ç­‰å¾…ç»“æœ
  */
 int ping_sem_pend(int iTo)
 {
@@ -113,7 +109,7 @@ int ping_sem_pend(int iTo)
 }
 
 /**
- * @brief pingĞÅºÅÁ¿ÊÍ·Å
+ * @brief pingä¿¡å·é‡é‡Šæ”¾
  */
 void ping_sem_post(void)
 {
@@ -121,173 +117,173 @@ void ping_sem_post(void)
 }
 
 /**
- * @brief ICMP»ØÏÔÇëÇóµÄ»Øµ÷´¦Àíº¯Êı
- * @param p ½ÓÊÕµ½µÄÊı¾İ°ü
- * @param inp ÍøÂç½Ó¿Ú
- * @param iphdr IPÍ·²¿
- * @return 1-´¦Àí³É¹¦,0-´¦ÀíÊ§°Ü
+ * @brief ICMPå›æ˜¾è¯·æ±‚çš„å›è°ƒå¤„ç†å‡½æ•°
+ * @param p æ¥æ”¶åˆ°çš„æ•°æ®åŒ…
+ * @param inp ç½‘ç»œæ¥å£
+ * @param iphdr IPå¤´éƒ¨
+ * @return 1-å¤„ç†æˆåŠŸ,0-å¤„ç†å¤±è´¥
  */
 uint8_t ping_callback(struct pbuf *p, struct netif *inp, struct ip_hdr *iphdr)
 {
-    char buf[200];                    // ÓÃÓÚ´æ´¢IPµØÖ·×Ö·û´®
-    unsigned char szIP[4] = {0};      // ÓÃÓÚ´æ´¢IPµØÖ·¸÷×Ö½Ú
-    INT16U usStrLen;                  // ·¢ËÍ»º³åÇø³¤¶È
-    INT32U dwTimeDiff = 0;            // Íù·µÊ±ÑÓ
-    uint32_t dwSysTimeNow = sys_now();  // »ñÈ¡µ±Ç°ÏµÍ³Ê±¼ä
-    // ¼ì²éÊı¾İ°ü³¤¶ÈÊÇ·ñºÏ·¨(ÖÁÉÙ°üº¬IPÍ·ºÍICMPÍ·)
+    char buf[200];                    // ç”¨äºå­˜å‚¨IPåœ°å€å­—ç¬¦ä¸²
+    unsigned char szIP[4] = {0};      // ç”¨äºå­˜å‚¨IPåœ°å€å„å­—èŠ‚
+    INT16U usStrLen;                  // å‘é€ç¼“å†²åŒºé•¿åº¦
+    INT32U dwTimeDiff = 0;            // å¾€è¿”æ—¶å»¶
+    uint32_t dwSysTimeNow = sys_now();  // è·å–å½“å‰ç³»ç»Ÿæ—¶é—´
+    // æ£€æŸ¥æ•°æ®åŒ…é•¿åº¦æ˜¯å¦åˆæ³•(è‡³å°‘åŒ…å«IPå¤´å’ŒICMPå¤´)
     if (p->tot_len >= (PBUF_IP_HLEN + 8))
     {
-        // ½âÎöÔ´IPµØÖ·
+        // è§£ææºIPåœ°å€
         szIP[3] = iphdr->src.addr >> 24;
         szIP[2] = iphdr->src.addr >> 16;
         szIP[1] = iphdr->src.addr >> 8;
         szIP[0] = iphdr->src.addr;
         sprintf((char *)buf, "%u.%u.%u.%u", szIP[0], szIP[1], szIP[2], szIP[3]);
-        // ¼ÆËãÍù·µÊ±ÑÓ
+        // è®¡ç®—å¾€è¿”æ—¶å»¶
         dwTimeDiff = dwSysTimeNow - g_dwSysTimeNow;
-        // ¸ù¾İÊ±ÑÓ¸ñÊ½»¯Êä³öĞÅÏ¢
+        // æ ¹æ®æ—¶å»¶æ ¼å¼åŒ–è¾“å‡ºä¿¡æ¯
         if (dwTimeDiff == 0)
         {
-            usStrLen = sprintf(g_szTelnetSndBuf, "\r\nÀ´×Ô %s µÄ»Ø¸´£º×Ö½Ú=%u Ê±¼ä<1ms TTL=%u", buf, p->tot_len - sizeof(struct icmp_echo_hdr), iphdr->_ttl);
+            usStrLen = sprintf(g_szTelnetSndBuf, "\r\nReply from %s: bytes=%u time<1ms TTL=%u", buf, p->tot_len - sizeof(struct icmp_echo_hdr), iphdr->_ttl);
         }
         else
         {
-            usStrLen = sprintf(g_szTelnetSndBuf, "\r\nÀ´×Ô %s µÄ»Ø¸´£º×Ö½Ú=%u Ê±¼ä=%ums TTL=%u", buf, p->tot_len - sizeof(struct icmp_echo_hdr), dwTimeDiff, iphdr->_ttl);
+            usStrLen = sprintf(g_szTelnetSndBuf, "\r\nReply from %s: bytes=%u time=%ums TTL=%u", buf, p->tot_len - sizeof(struct icmp_echo_hdr), dwTimeDiff, iphdr->_ttl);
         }
-        // Í¨¹ıtelnet·¢ËÍÏìÓ¦ĞÅÏ¢
+        // é€šè¿‡telnetå‘é€å“åº”ä¿¡æ¯
         tcp_write(g_PCB_Telnet_p, g_szTelnetSndBuf, usStrLen, TCP_WRITE_FLAG_COPY);
-        ping_sem_post();  // ÊÍ·ÅpingĞÅºÅÁ¿
+        ping_sem_post();  // é‡Šæ”¾pingä¿¡å·é‡
         return 1;
     }
     return 0;
 }
 
 /**
- * @brief ping³¬Ê±´¦Àí
+ * @brief pingè¶…æ—¶å¤„ç†
  */
 void ping_timeout(void)
 {
     INT16U usStrLen;
-    usStrLen = sprintf(g_szTelnetSndBuf, "\r\nÇëÇó³¬Ê±»òÎŞ·¨·ÃÎÊÖ÷»ú");
+    usStrLen = sprintf(g_szTelnetSndBuf, "\r\nRequest timed out or host unreachable");
     tcp_write(g_PCB_Telnet_p, g_szTelnetSndBuf, usStrLen, TCP_WRITE_FLAG_COPY);
 }
 
 /**
- * @brief pingÃüÁî½áÊøÊ±ÏÔÊ¾Í³¼ÆĞÅÏ¢
- * @param dwSucc ping³É¹¦´ÎÊı
- * @param dwErr pingÊ§°Ü´ÎÊı
+ * @brief pingå‘½ä»¤ç»“æŸæ—¶æ˜¾ç¤ºç»Ÿè®¡ä¿¡æ¯
+ * @param dwSucc pingæˆåŠŸæ¬¡æ•°
+ * @param dwErr pingå¤±è´¥æ¬¡æ•°
  * 
- * ¸Ãº¯ÊıÓÃÓÚÔÚpingÃüÁî½áÊøÊ±ÏÔÊ¾Í³¼ÆĞÅÏ¢,°üÀ¨:
- * - Ä¿±êIPµØÖ·
- * - ·¢ËÍµÄÊı¾İ°ü×ÜÊı
- * - ³É¹¦½ÓÊÕµÄÊı¾İ°üÊı
- * - ¶ªÊ§µÄÊı¾İ°üÊı¼°¶ª°üÂÊ
+ * è¯¥å‡½æ•°ç”¨äºåœ¨pingå‘½ä»¤ç»“æŸæ—¶æ˜¾ç¤ºç»Ÿè®¡ä¿¡æ¯,åŒ…æ‹¬:
+ * - ç›®æ ‡IPåœ°å€
+ * - å‘é€çš„æ•°æ®åŒ…æ€»æ•°
+ * - æˆåŠŸæ¥æ”¶çš„æ•°æ®åŒ…æ•°
+ * - ä¸¢å¤±çš„æ•°æ®åŒ…æ•°åŠä¸¢åŒ…ç‡
  */
 void ping_proc_end(unsigned int dwSucc, unsigned int dwErr)
 {
-    INT16U usStrLen;                    // ·¢ËÍ»º³åÇø³¤¶È
-    char buf[100];                      // IPµØÖ·×Ö·û´®»º³åÇø
-    unsigned char szIP[4] = {0};        // IPµØÖ·¸÷×Ö½Ú´æ´¢Êı×é
-    // ½âÎöÄ¿±êIPµØÖ·Îªµã·ÖÊ®½øÖÆ¸ñÊ½
+    INT16U usStrLen;                    // å‘é€ç¼“å†²åŒºé•¿åº¦
+    char buf[100];                      // IPåœ°å€å­—ç¬¦ä¸²ç¼“å†²åŒº
+    unsigned char szIP[4] = {0};        // IPåœ°å€å„å­—èŠ‚å­˜å‚¨æ•°ç»„
+    // è§£æç›®æ ‡IPåœ°å€ä¸ºç‚¹åˆ†åè¿›åˆ¶æ ¼å¼
     szIP[3] = (pingipaddr->addr) >> 24;
     szIP[2] = (pingipaddr->addr) >> 16; 
     szIP[1] = (pingipaddr->addr) >> 8;
     szIP[0] = (pingipaddr->addr);
     sprintf((char *)buf, "%u.%u.%u.%u", szIP[0], szIP[1], szIP[2], szIP[3]);
-    // ¸ñÊ½»¯Í³¼ÆĞÅÏ¢²¢·¢ËÍ
-    usStrLen = sprintf(g_szTelnetSndBuf, "\r\n\r\n%s µÄ Ping Í³¼ÆĞÅÏ¢£º\r\n\tÊı¾İ°ü£ºÒÑ·¢ËÍ = %u£¬ÒÑ½ÓÊÕ = %u£¬¶ªÊ§ = %u <%u%% ¶ªÊ§>\r\n", 
-        buf, dwSucc + dwErr, dwSucc, dwErr, dwErr * 100 / (dwSucc + dwErr));
+    // æ ¼å¼åŒ–ç»Ÿè®¡ä¿¡æ¯å¹¶å‘é€
+    usStrLen = sprintf(g_szTelnetSndBuf, "\r\n\r\nPing statistics for %s:\r\n\tPackets: Sent = %u, Received = %u, Lost = %u <%u%% loss>\r\n",
+         buf, dwSucc + dwErr, dwSucc, dwErr, dwErr * 100 / (dwSucc + dwErr));
     tcp_write(g_PCB_Telnet_p, g_szTelnetSndBuf, usStrLen, TCP_WRITE_FLAG_COPY);
-    // ÏÔÊ¾ÃüÁîÌáÊ¾·û
+    // æ˜¾ç¤ºå‘½ä»¤æç¤ºç¬¦
     Telnet_Display_Cmd_Prompt(g_PCB_Telnet_p, NULL);
 }
 
 /**
- * @brief pingÖ÷Á÷³Ìº¯Êı
+ * @brief pingä¸»æµç¨‹å‡½æ•°
  * 
- * ¸Ãº¯ÊıÊµÏÖpingÃüÁîµÄÖ÷ÒªÂß¼­:
- * - Ñ­»··¢ËÍpingÇëÇóÖ±µ½¼ÆÊıÎª0
- * - Ã¿´ÎpingÇëÇóµÈ´ıÏìÓ¦3Ãë
- * - Í³¼Æ³É¹¦ºÍÊ§°Ü´ÎÊı
- * - ¿ØÖÆpingÇëÇó¼ä¸ôÖÁÉÙ1Ãë
+ * è¯¥å‡½æ•°å®ç°pingå‘½ä»¤çš„ä¸»è¦é€»è¾‘:
+ * - å¾ªç¯å‘é€pingè¯·æ±‚ç›´åˆ°è®¡æ•°ä¸º0
+ * - æ¯æ¬¡pingè¯·æ±‚ç­‰å¾…å“åº”3ç§’
+ * - ç»Ÿè®¡æˆåŠŸå’Œå¤±è´¥æ¬¡æ•°
+ * - æ§åˆ¶pingè¯·æ±‚é—´éš”è‡³å°‘1ç§’
  */
 void ping_proc(void)
 {
-    OS_TICK iTo = 0;                                    // ĞÅºÅÁ¿µÈ´ı³¬Ê±Ê±¼ä
-    unsigned int dwSystick = 0;                         // ÏµÍ³Ê±¼ä¼ÆÊı
-    unsigned int dwPingSuccCnt = 0;                     // ping³É¹¦¼ÆÊı
-    unsigned int dwPingErrCnt = 0;                      // pingÊ§°Ü¼ÆÊı
+    OS_TICK iTo = 0;                                    // ä¿¡å·é‡ç­‰å¾…è¶…æ—¶æ—¶é—´
+    unsigned int dwSystick = 0;                         // ç³»ç»Ÿæ—¶é—´è®¡æ•°
+    unsigned int dwPingSuccCnt = 0;                     // pingæˆåŠŸè®¡æ•°
+    unsigned int dwPingErrCnt = 0;                      // pingå¤±è´¥è®¡æ•°
     
-    ping_sem_pend(iTo);                                // ³õÊ¼µÈ´ıĞÅºÅÁ¿
+    ping_sem_pend(iTo);                                // åˆå§‹ç­‰å¾…ä¿¡å·é‡
 
-    // ¼ì²éping¿ØÖÆ¿éÊÇ·ñÓĞĞ§
+    // æ£€æŸ¥pingæ§åˆ¶å—æ˜¯å¦æœ‰æ•ˆ
     if (ping_pcb == NULL || pingipaddr == NULL) {
-        // ÏÔÊ¾´íÎóĞÅÏ¢
-        INT16U usStrLen = sprintf(g_szTelnetSndBuf, "\r\nPing³õÊ¼»¯Ê§°Ü");
+        // æ˜¾ç¤ºé”™è¯¯ä¿¡æ¯
+        INT16U usStrLen = sprintf(g_szTelnetSndBuf, "\r\nPing initialization failed");
         tcp_write(g_PCB_Telnet_p, g_szTelnetSndBuf, usStrLen, TCP_WRITE_FLAG_COPY);
         Telnet_Display_Cmd_Prompt(g_PCB_Telnet_p, NULL);
         return;
     }
 
-    while (g_dwPingCnt > 0)                            // Ñ­»·Ö±µ½Íê³ÉËùÓĞpingÇëÇó
+    while (g_dwPingCnt > 0)                            // å¾ªç¯ç›´åˆ°å®Œæˆæ‰€æœ‰pingè¯·æ±‚
     {
-        ping_send(ping_pcb, pingipaddr);               // ·¢ËÍPingÇëÇó
-        iTo = 3000;                                    // ÉèÖÃ3Ãë³¬Ê±
-        dwSystick = sys_now();                         // ¼ÇÂ¼·¢ËÍÊ±¼ä
-        if (ping_sem_pend(iTo) != OS_ERR_NONE)         // µÈ´ıpingÏìÓ¦
+        ping_send(ping_pcb, pingipaddr);               // å‘é€Pingè¯·æ±‚
+        iTo = 3000;                                    // è®¾ç½®3ç§’è¶…æ—¶
+        dwSystick = sys_now();                         // è®°å½•å‘é€æ—¶é—´
+        if (ping_sem_pend(iTo) != OS_ERR_NONE)         // ç­‰å¾…pingå“åº”
         {
-            ping_timeout();                            // ³¬Ê±´¦Àí
-            dwPingErrCnt++;                            // Ê§°Ü¼ÆÊı¼Ó1
+            ping_timeout();                            // è¶…æ—¶å¤„ç†
+            dwPingErrCnt++;                            // å¤±è´¥è®¡æ•°åŠ 1
         }
         else
         {
-            dwPingSuccCnt++;                          // ³É¹¦¼ÆÊı¼Ó1
-            dwSystick = sys_now() - dwSystick;        // ¼ÆËãÊµ¼ÊÓÃÊ±
-            if (dwSystick < 1000)                     // Èç¹ûÓÃÊ±Ğ¡ÓÚ1Ãë
+            dwPingSuccCnt++;                          // æˆåŠŸè®¡æ•°åŠ 1
+            dwSystick = sys_now() - dwSystick;        // è®¡ç®—å®é™…ç”¨æ—¶
+            if (dwSystick < 1000)                     // å¦‚æœç”¨æ—¶å°äº1ç§’
             {
-                g_stGlobeOps.systimer_ops.sleep(1000 - dwSystick);  // ²¹×ãµÈ´ıÖÁ1Ãë
+                g_stGlobeOps.systimer_ops.sleep(1000 - dwSystick);  // è¡¥è¶³ç­‰å¾…è‡³1ç§’
             }
         }
-        g_dwPingCnt--;                                // Ê£Óàping´ÎÊı¼õ1
-        if (g_dwPingCnt == 0)                         // ËùÓĞpingÇëÇóÍê³É
+        g_dwPingCnt--;                                // å‰©ä½™pingæ¬¡æ•°å‡1
+        if (g_dwPingCnt == 0)                         // æ‰€æœ‰pingè¯·æ±‚å®Œæˆ
         {
-            ping_proc_end(dwPingSuccCnt, dwPingErrCnt);  // ÏÔÊ¾Í³¼Æ½á¹û
-            dwPingSuccCnt = 0;                        // ÖØÖÃ¼ÆÊıÆ÷
+            ping_proc_end(dwPingSuccCnt, dwPingErrCnt);  // æ˜¾ç¤ºç»Ÿè®¡ç»“æœ
+            dwPingSuccCnt = 0;                        // é‡ç½®è®¡æ•°å™¨
             dwPingErrCnt = 0;
         }
     }
-    iTo = 0;                                          // ÖØÖÃ³¬Ê±Ê±¼ä
+    iTo = 0;                                          // é‡ç½®è¶…æ—¶æ—¶é—´
 }
 
 /**
- * @brief ICMP¿ØÖÆ¿é³õÊ¼»¯
+ * @brief ICMPæ§åˆ¶å—åˆå§‹åŒ–
  * 
- * ¸Ãº¯ÊıÓÃÓÚ³õÊ¼»¯ICMPÔ­Ê¼Ì×½Ó×Ö¿ØÖÆ¿é,ÓÃÓÚping¹¦ÄÜ
+ * è¯¥å‡½æ•°ç”¨äºåˆå§‹åŒ–ICMPåŸå§‹å¥—æ¥å­—æ§åˆ¶å—,ç”¨äºpingåŠŸèƒ½
  * 
- * @return 0-³õÊ¼»¯³É¹¦, 1-³õÊ¼»¯Ê§°Ü
+ * @return 0-åˆå§‹åŒ–æˆåŠŸ, 1-åˆå§‹åŒ–å¤±è´¥
  * 
  * @note 
- * - Ê¹ÓÃraw_new()´´½¨ICMPÔ­Ê¼Ì×½Ó×Ö
- * - Ä¿Ç°Î´ÆôÓÃ»Øµ÷º¯Êı×¢²áºÍIP°ó¶¨¹¦ÄÜ
+ * - ä½¿ç”¨raw_new()åˆ›å»ºICMPåŸå§‹å¥—æ¥å­—
+ * - ç›®å‰æœªå¯ç”¨å›è°ƒå‡½æ•°æ³¨å†Œå’ŒIPç»‘å®šåŠŸèƒ½
  */
 uint8_t icmp_pcb_init(void)
 {
-    // ´´½¨ICMPÔ­Ê¼Ì×½Ó×Ö¿ØÖÆ¿é
+    // åˆ›å»ºICMPåŸå§‹å¥—æ¥å­—æ§åˆ¶å—
     ping_pcb = raw_new(IP_PROTO_ICMP);
-    // ¼ì²é¿ØÖÆ¿éÊÇ·ñ´´½¨³É¹¦
+    // æ£€æŸ¥æ§åˆ¶å—æ˜¯å¦åˆ›å»ºæˆåŠŸ
     if (!ping_pcb)
         return 1; 
-    // raw_recv(ping_pcb,raw_callback,NULL);  //×¢²á»Øµ÷º¯Êı
-    // raw_bind(ping_pcb,IP_ADDR_ANY);        //°ó¶¨±¾µØIPµØÖ·  ÕâÀïANYIP
+    // raw_recv(ping_pcb,raw_callback,NULL);  //æ³¨å†Œå›è°ƒå‡½æ•°
+    // raw_bind(ping_pcb,IP_ADDR_ANY);        //ç»‘å®šæœ¬åœ°IPåœ°å€  è¿™é‡ŒANYIP
     return 0;
 }
 
 /**
- * @brief ×¼±¸ICMP»ØÏÔÇëÇóÊı¾İ°ü
- * @param iecho ICMPÍ·²¿½á¹¹ÌåÖ¸Õë
- * @param ping_size pingÊı¾İ°ü×Ü´óĞ¡
+ * @brief å‡†å¤‡ICMPå›æ˜¾è¯·æ±‚æ•°æ®åŒ…
+ * @param iecho ICMPå¤´éƒ¨ç»“æ„ä½“æŒ‡é’ˆ
+ * @param ping_size pingæ•°æ®åŒ…æ€»å¤§å°
  * 
- * ¸Ãº¯ÊıÓÃÓÚÌî³äICMP»ØÏÔÇëÇó°üµÄ¸÷¸ö×Ö¶Î:
+ * è¯¥å‡½æ•°ç”¨äºå¡«å……ICMPå›æ˜¾è¯·æ±‚åŒ…çš„å„ä¸ªå­—æ®µ:
  */
 void ping_prepare_echo(struct icmp_echo_hdr *iecho, uint16_t ping_size)
 {
@@ -295,18 +291,18 @@ void ping_prepare_echo(struct icmp_echo_hdr *iecho, uint16_t ping_size)
     char send_c = 'a';
     // size_t data_len=ping_size-sizeof(struct icmp_echo_hdr);
     
-    /* ÉèÖÃICMPÍ·²¿×Ö¶Î */
-    ICMPH_TYPE_SET(iecho, ICMP_ECHO);    // ÉèÖÃÀàĞÍÎª»ØÏÔÇëÇó
-    ICMPH_CODE_SET(iecho, 0);            // ÉèÖÃ´úÂëÎª0
-    iecho->chksum = 0;                   // Ğ£ÑéºÍ³õÊ¼»¯Îª0
-    iecho->id = 0x01;                    // ±êÊ¶·ûÉèÎª0x01
-    iecho->seqno = 0x8418;               // ĞòÁĞºÅÉèÎª0x8418
-    /* Ìî³äICMPÊı¾İ²¿·Ö */
+    /* è®¾ç½®ICMPå¤´éƒ¨å­—æ®µ */
+    ICMPH_TYPE_SET(iecho, ICMP_ECHO);    // è®¾ç½®ç±»å‹ä¸ºå›æ˜¾è¯·æ±‚
+    ICMPH_CODE_SET(iecho, 0);            // è®¾ç½®ä»£ç ä¸º0
+    iecho->chksum = 0;                   // æ ¡éªŒå’Œåˆå§‹åŒ–ä¸º0
+    iecho->id = 0x01;                    // æ ‡è¯†ç¬¦è®¾ä¸º0x01
+    iecho->seqno = 0x8418;               // åºåˆ—å·è®¾ä¸º0x8418
+    /* å¡«å……ICMPæ•°æ®éƒ¨åˆ† */
     for (i = 0; i < ping_size; i++)
     {
-        ((char *)iecho)[sizeof(struct icmp_echo_hdr) + i] = send_c;  // Ìî³äÊı¾İ
-        send_c = send_c + 1;     // ×Ö·ûµİÔö
-        if (send_c == 'z')       // ³¬¹ızÔòÖØĞÂ´Óa¿ªÊ¼
+        ((char *)iecho)[sizeof(struct icmp_echo_hdr) + i] = send_c;  // å¡«å……æ•°æ®
+        send_c = send_c + 1;     // å­—ç¬¦é€’å¢
+        if (send_c == 'z')       // è¶…è¿‡zåˆ™é‡æ–°ä»aå¼€å§‹
         {
             send_c = 'a';
         }
@@ -315,91 +311,91 @@ void ping_prepare_echo(struct icmp_echo_hdr *iecho, uint16_t ping_size)
 }
 
 /**
- * @brief ¹¹Ôì²¢·¢ËÍICMP»ØÏÔÇëÇó(ping)Êı¾İ°ü
- * @param pcb ICMP¿ØÖÆ¿é
- * @param ipaddr Ä¿±êIPµØÖ·
+ * @brief æ„é€ å¹¶å‘é€ICMPå›æ˜¾è¯·æ±‚(ping)æ•°æ®åŒ…
+ * @param pcb ICMPæ§åˆ¶å—
+ * @param ipaddr ç›®æ ‡IPåœ°å€
  * 
  */
 void ping_send(struct raw_pcb *pcb, ip_addr_t *ipaddr)
 {
-    struct pbuf *p;                    // pbuf»º³åÇø½á¹¹Ìå
-    struct icmp_echo_hdr *iecho;       // ICMPÍ·²¿½á¹¹ÌåÖ¸Õë
-    // telnetÁ¬½Ó¶Ï¿ªÊ±Í£Ö¹ping
+    struct pbuf *p;                    // pbufç¼“å†²åŒºç»“æ„ä½“
+    struct icmp_echo_hdr *iecho;       // ICMPå¤´éƒ¨ç»“æ„ä½“æŒ‡é’ˆ
+    // telnetè¿æ¥æ–­å¼€æ—¶åœæ­¢ping
     if (g_PCB_Telnet_p == NULL)
     {
-        g_dwPingCnt = 1;              // ÉèÖÃÊ£Óàping´ÎÊıÎª1,Ê¹ping²Ù×÷¾¡¿ì½áÊø
+        g_dwPingCnt = 1;              // è®¾ç½®å‰©ä½™pingæ¬¡æ•°ä¸º1,ä½¿pingæ“ä½œå°½å¿«ç»“æŸ
     }
-    // ·ÖÅäpbuf»º³åÇø,´óĞ¡ÎªICMPÍ·²¿+32×Ö½ÚÊı¾İ
-    p = pbuf_alloc(PBUF_IP, 32 + sizeof(struct icmp_echo_hdr), PBUF_RAM); // ÉêÇëpbuf½á¹¹
+    // åˆ†é…pbufç¼“å†²åŒº,å¤§å°ä¸ºICMPå¤´éƒ¨+32å­—èŠ‚æ•°æ®
+    p = pbuf_alloc(PBUF_IP, 32 + sizeof(struct icmp_echo_hdr), PBUF_RAM); // ç”³è¯·pbufç»“æ„
     if (!p)
     {
-        return;                        // ·ÖÅäÊ§°ÜÖ±½Ó·µ»Ø
+        return;                        // åˆ†é…å¤±è´¥ç›´æ¥è¿”å›
     }
-    // ¼ì²épbufÊÇ·ñÎªµ¥¸öÁ¬Ğø»º³åÇø
+    // æ£€æŸ¥pbufæ˜¯å¦ä¸ºå•ä¸ªè¿ç»­ç¼“å†²åŒº
     if (p->len == p->tot_len && p->next == NULL)
     {
-        iecho = (struct icmp_echo_hdr *)p->payload;  // »ñÈ¡Êı¾İÇøÖ¸Õë
-        ping_prepare_echo(iecho, 32);                // ÌîĞ´ICMPÊ×²¿¸÷×Ö¶Î
-        raw_sendto(pcb, p, ipaddr);                 // µ×²ã·¢ËÍ
+        iecho = (struct icmp_echo_hdr *)p->payload;  // è·å–æ•°æ®åŒºæŒ‡é’ˆ
+        ping_prepare_echo(iecho, 32);                // å¡«å†™ICMPé¦–éƒ¨å„å­—æ®µ
+        raw_sendto(pcb, p, ipaddr);                 // åº•å±‚å‘é€
     }
-    g_dwSysTimeNow = sys_now();                     // ¼ÇÂ¼·¢ËÍÊ±¼ä
-    pbuf_free(p);                                   // ÊÍ·Åpbuf
+    g_dwSysTimeNow = sys_now();                     // è®°å½•å‘é€æ—¶é—´
+    pbuf_free(p);                                   // é‡Šæ”¾pbuf
 }
 
 /**
- * @brief ²åÈëTelnetÃüÁîµ½ÀúÊ·ÃüÁî»º³åÇø
- * @param cmd Òª²åÈëµÄÃüÁî×Ö·û´®
+ * @brief æ’å…¥Telnetå‘½ä»¤åˆ°å†å²å‘½ä»¤ç¼“å†²åŒº
+ * @param cmd è¦æ’å…¥çš„å‘½ä»¤å­—ç¬¦ä¸²
  * 
  */
 static void Insert_Telnet_Cmd(char *cmd)
 {
-    // ¼ÆËã×î½üÒ»ÌõÃüÁîµÄË÷ÒıÎ»ÖÃ
+    // è®¡ç®—æœ€è¿‘ä¸€æ¡å‘½ä»¤çš„ç´¢å¼•ä½ç½®
     int lastCmdIndex = (g_stTelnetCmdList.ucWrite + MAX_TELNET_CMD_BUFF_LEN - 1) % MAX_TELNET_CMD_BUFF_LEN;
     
-    // ¼ì²éÊÇ·ñÓë×î½üÒ»ÌõÃüÁîÖØ¸´
+    // æ£€æŸ¥æ˜¯å¦ä¸æœ€è¿‘ä¸€æ¡å‘½ä»¤é‡å¤
     if ((strlen(g_stTelnetCmdList.stCmdList[lastCmdIndex].szCmd) == strlen(cmd)) &&
         (0 == memcmp(g_stTelnetCmdList.stCmdList[lastCmdIndex].szCmd, cmd, strlen(cmd))))
     {
-        // ÖØ¸´ÃüÁî,½ö¸üĞÂµ±Ç°Ë÷Òı
+        // é‡å¤å‘½ä»¤,ä»…æ›´æ–°å½“å‰ç´¢å¼•
         g_stTelnetCmdList.ucIndex = g_stTelnetCmdList.ucWrite;
         return;
     }
 
-    // ¼ì²é»º³åÇøÊÇ·ñÒÑÂú
+    // æ£€æŸ¥ç¼“å†²åŒºæ˜¯å¦å·²æ»¡
     if ((g_stTelnetCmdList.ucWrite + 1) % MAX_TELNET_CMD_BUFF_LEN == g_stTelnetCmdList.ucRead)
     {
-        // »º³åÇøÂú,Çå¿Õ×îÔçµÄÃüÁî²¢ÒÆ¶¯¶ÁÖ¸Õë
+        // ç¼“å†²åŒºæ»¡,æ¸…ç©ºæœ€æ—©çš„å‘½ä»¤å¹¶ç§»åŠ¨è¯»æŒ‡é’ˆ
         memset(g_stTelnetCmdList.stCmdList[g_stTelnetCmdList.ucRead].szCmd, 0, 
                sizeof(g_stTelnetCmdList.stCmdList[g_stTelnetCmdList.ucRead].szCmd));
         g_stTelnetCmdList.ucRead = (g_stTelnetCmdList.ucRead + 1) % MAX_TELNET_CMD_BUFF_LEN;
     }
 
-    // ±£´æĞÂÃüÁîµ½Ğ´Ö¸ÕëÎ»ÖÃ
+    // ä¿å­˜æ–°å‘½ä»¤åˆ°å†™æŒ‡é’ˆä½ç½®
     memcpy(g_stTelnetCmdList.stCmdList[g_stTelnetCmdList.ucWrite].szCmd, cmd, strlen(cmd));
     
-    // ¸üĞÂĞ´Ö¸ÕëºÍµ±Ç°Ë÷Òı
+    // æ›´æ–°å†™æŒ‡é’ˆå’Œå½“å‰ç´¢å¼•
     g_stTelnetCmdList.ucWrite = (g_stTelnetCmdList.ucWrite + 1) % MAX_TELNET_CMD_BUFF_LEN;
     g_stTelnetCmdList.ucIndex = g_stTelnetCmdList.ucWrite;
 }
 
 /**
- * @brief ²éÕÒÉÏÒ»ÌõTelnetÃüÁî
- * @param cmd ÓÃÓÚ´æ´¢ÕÒµ½µÄÃüÁî
- * @return 0xFF-ÒÑµ½´ï×îÔçÃüÁî; 1-ÕÒµ½ÃüÁî; 0-ÎŞÃüÁî
+ * @brief æŸ¥æ‰¾ä¸Šä¸€æ¡Telnetå‘½ä»¤
+ * @param cmd ç”¨äºå­˜å‚¨æ‰¾åˆ°çš„å‘½ä»¤
+ * @return 0xFF-å·²åˆ°è¾¾æœ€æ—©å‘½ä»¤; 1-æ‰¾åˆ°å‘½ä»¤; 0-æ— å‘½ä»¤
  */
 static INT8U Find_Telnet_Prev_Cmd(char *cmd)
 {
-    // ¼ì²éÃüÁî»º³åÇøÊÇ·ñÎª¿Õ
+    // æ£€æŸ¥å‘½ä»¤ç¼“å†²åŒºæ˜¯å¦ä¸ºç©º
     if (g_stTelnetCmdList.ucRead != g_stTelnetCmdList.ucWrite)
     {
-        // ÒÑµ½´ï×îÔçµÄÃüÁî
+        // å·²åˆ°è¾¾æœ€æ—©çš„å‘½ä»¤
         if (g_stTelnetCmdList.ucRead == g_stTelnetCmdList.ucIndex)
         {
             memcpy(cmd, g_stTelnetCmdList.stCmdList[g_stTelnetCmdList.ucIndex].szCmd, 
                 strlen(g_stTelnetCmdList.stCmdList[g_stTelnetCmdList.ucIndex].szCmd));
             return 0xFF;
         }
-        // ¸üĞÂË÷ÒıÖ¸ÏòÉÏÒ»ÌõÃüÁî
+        // æ›´æ–°ç´¢å¼•æŒ‡å‘ä¸Šä¸€æ¡å‘½ä»¤
         if (g_stTelnetCmdList.ucIndex == 0)
         {
             g_stTelnetCmdList.ucIndex = MAX_TELNET_CMD_BUFF_LEN - 1;
@@ -408,7 +404,7 @@ static INT8U Find_Telnet_Prev_Cmd(char *cmd)
         {
             g_stTelnetCmdList.ucIndex--;
         }
-        // ¸´ÖÆÕÒµ½µÄÃüÁî
+        // å¤åˆ¶æ‰¾åˆ°çš„å‘½ä»¤
         memcpy(cmd, g_stTelnetCmdList.stCmdList[g_stTelnetCmdList.ucIndex].szCmd,
             strlen(g_stTelnetCmdList.stCmdList[g_stTelnetCmdList.ucIndex].szCmd));
         return 1;
@@ -417,16 +413,16 @@ static INT8U Find_Telnet_Prev_Cmd(char *cmd)
 }
 
 /**
- * @brief ²éÕÒÏÂÒ»ÌõTelnetÃüÁî
- * @param cmd ÓÃÓÚ´æ´¢ÕÒµ½µÄÃüÁî
- * @return 0xFF-ÒÑµ½´ï×îĞÂÃüÁî; 1-ÕÒµ½ÃüÁî; 0-ÎŞÃüÁî
+ * @brief æŸ¥æ‰¾ä¸‹ä¸€æ¡Telnetå‘½ä»¤
+ * @param cmd ç”¨äºå­˜å‚¨æ‰¾åˆ°çš„å‘½ä»¤
+ * @return 0xFF-å·²åˆ°è¾¾æœ€æ–°å‘½ä»¤; 1-æ‰¾åˆ°å‘½ä»¤; 0-æ— å‘½ä»¤
  */
 static INT8U Find_Telnet_Next_Cmd(char *cmd)
 {
-    // ¼ì²éÃüÁî»º³åÇøÊÇ·ñÎª¿Õ
+    // æ£€æŸ¥å‘½ä»¤ç¼“å†²åŒºæ˜¯å¦ä¸ºç©º
     if (g_stTelnetCmdList.ucRead != g_stTelnetCmdList.ucWrite)
     {
-        // ÒÑµ½´ï×îĞÂµÄÃüÁî
+        // å·²åˆ°è¾¾æœ€æ–°çš„å‘½ä»¤
         if (((g_stTelnetCmdList.ucIndex + 1) % MAX_TELNET_CMD_BUFF_LEN == g_stTelnetCmdList.ucWrite) ||
             (g_stTelnetCmdList.ucIndex == g_stTelnetCmdList.ucWrite))
         {
@@ -434,9 +430,9 @@ static INT8U Find_Telnet_Next_Cmd(char *cmd)
                 strlen(g_stTelnetCmdList.stCmdList[g_stTelnetCmdList.ucIndex].szCmd));
             return 0xFF;
         }
-        // ¸üĞÂË÷ÒıÖ¸ÏòÏÂÒ»ÌõÃüÁî
+        // æ›´æ–°ç´¢å¼•æŒ‡å‘ä¸‹ä¸€æ¡å‘½ä»¤
         g_stTelnetCmdList.ucIndex = (g_stTelnetCmdList.ucIndex + 1) % MAX_TELNET_CMD_BUFF_LEN;
-        // ¸´ÖÆÕÒµ½µÄÃüÁî
+        // å¤åˆ¶æ‰¾åˆ°çš„å‘½ä»¤
         memcpy(cmd, g_stTelnetCmdList.stCmdList[g_stTelnetCmdList.ucIndex].szCmd,
             strlen(g_stTelnetCmdList.stCmdList[g_stTelnetCmdList.ucIndex].szCmd));
         return 1;
@@ -445,18 +441,18 @@ static INT8U Find_Telnet_Next_Cmd(char *cmd)
 }
 
 /**
- * @brief ´¦ÀíTelnetÃüÁî
- * @param cmd ÃüÁî×Ö·û´®
- * @param pcb TCP¿ØÖÆ¿é
+ * @brief å¤„ç†Telnetå‘½ä»¤
+ * @param cmd å‘½ä»¤å­—ç¬¦ä¸²
+ * @param pcb TCPæ§åˆ¶å—
  */
 static void telnet_cmd_process(char *cmd, struct tcp_pcb *pcb)
 {
     int i = 0;
-    unsigned char ucFlg = 0;  // ÃüÁî´¦Àí±êÖ¾
+    unsigned char ucFlg = 0;  // å‘½ä»¤å¤„ç†æ ‡å¿—
     unsigned short usStrLen = 0;
     arg_info tmp_arg_info = {0};
 
-    // ´¦ÀíÈ«¿Õ¸ñÃüÁî
+    // å¤„ç†å…¨ç©ºæ ¼å‘½ä»¤
     if (cmd[0] == ' ')
     {
         for (i = 0; i < strlen(cmd); i++)
@@ -472,23 +468,23 @@ static void telnet_cmd_process(char *cmd, struct tcp_pcb *pcb)
             if (g_ucLogSuspend == 0)
             {
                 g_ucLogSuspend = 1;
-                usStrLen = sprintf(g_szTelnetSndBuf, "\r\n%c[1;33mÖÕ¶ËÒÑÔİÍ£%c[0;37m", ESC, ESC);
+                usStrLen = sprintf(g_szTelnetSndBuf, "\r\n%c[1;33mTerminal paused%c[0;37m", ESC, ESC);
                 tcp_write(pcb, g_szTelnetSndBuf, usStrLen, TCP_WRITE_FLAG_COPY);
             }
             else
             {
                 g_ucLogSuspend = 0;
-                usStrLen = sprintf(g_szTelnetSndBuf, "\r\n%c[1;33mÖÕ¶ËÒÑ»Ö¸´%c[0;37m", ESC, ESC);
+                usStrLen = sprintf(g_szTelnetSndBuf, "\r\n%c[1;33mTerminal resumed%c[0;37m", ESC, ESC);
                 tcp_write(pcb, g_szTelnetSndBuf, usStrLen, TCP_WRITE_FLAG_COPY);
             }
             return;
         }
     }
 
-    // ±£´æÃüÁîµ½ÀúÊ·¼ÇÂ¼
+    // ä¿å­˜å‘½ä»¤åˆ°å†å²è®°å½•
     Insert_Telnet_Cmd(cmd);
 
-    // ½âÎö²¢Ö´ĞĞÃüÁî
+    // è§£æå¹¶æ‰§è¡Œå‘½ä»¤
     if (cmd_parse_info(cmd, &tmp_arg_info) >= 1)
     {
         if (find_cmd(tmp_arg_info.argv[0], &tmp_arg_info, 0) != NULL)
@@ -497,20 +493,20 @@ static void telnet_cmd_process(char *cmd, struct tcp_pcb *pcb)
         }
     }
 
-    // ÏÔÊ¾ÎŞĞ§ÃüÁîÌáÊ¾
+    // æ˜¾ç¤ºæ— æ•ˆå‘½ä»¤æç¤º
     if (0 == ucFlg)
     {
-        usStrLen = sprintf(g_szTelnetSndBuf, "\r\n%c[1;31mÎŞĞ§ÃüÁî: %s%c[0;37m", ESC, g_szTelnetCmdBuf, ESC);
+        usStrLen = sprintf(g_szTelnetSndBuf, "\r\n%c[1;31mæ— æ•ˆå‘½ä»¤: %s%c[0;37m", ESC, g_szTelnetCmdBuf, ESC);
         tcp_write(pcb, g_szTelnetSndBuf, usStrLen, TCP_WRITE_FLAG_COPY);
     }
 }
 
 /**
- * @brief É¾³ıÔ¶³ÌÃüÁîĞĞÏÔÊ¾µÄ×Ö·û
- * @param pcb TCP¿ØÖÆ¿é
- * @param size ÒªÉ¾³ıµÄ×Ö·ûÊı
+ * @brief åˆ é™¤è¿œç¨‹å‘½ä»¤è¡Œæ˜¾ç¤ºçš„å­—ç¬¦
+ * @param pcb TCPæ§åˆ¶å—
+ * @param size è¦åˆ é™¤çš„å­—ç¬¦æ•°
  * 
- * Í¨¹ı·¢ËÍÍË¸ñºÍ¿Õ¸ñÊµÏÖÉ¾³ıĞ§¹û
+ * é€šè¿‡å‘é€é€€æ ¼å’Œç©ºæ ¼å®ç°åˆ é™¤æ•ˆæœ
  */
 static void Telnet_Delete_Remote_Cmdline(struct tcp_pcb *pcb, INT8U size)
 {
@@ -530,12 +526,12 @@ static void Telnet_Delete_Remote_Cmdline(struct tcp_pcb *pcb, INT8U size)
 }
 
 /**
- * @brief TelnetÁ¬½ÓÍË³ö´¦Àí
- * @param pcb TCP¿ØÖÆ¿é
- * @param p Êı¾İ°ü»º³åÇø
- * @return ´íÎóÂë
+ * @brief Telnetè¿æ¥é€€å‡ºå¤„ç†
+ * @param pcb TCPæ§åˆ¶å—
+ * @param p æ•°æ®åŒ…ç¼“å†²åŒº
+ * @return é”™è¯¯ç 
  * 
- * ÇåÀí×ÊÔ´²¢¹Ø±ÕTCPÁ¬½Ó
+ * æ¸…ç†èµ„æºå¹¶å…³é—­TCPè¿æ¥
  */
 static err_t telnet_exit(struct tcp_pcb *pcb, struct pbuf *p)
 {
@@ -791,7 +787,7 @@ static err_t telnet_recv(void *arg, struct tcp_pcb *pcb, struct pbuf *p, err_t e
 
                             if ((sys_now() - g_dwLastTelnetTabRevSysCnt) < 300)
                             {
-                                //---double tabËùÓĞ·ûºÏµÄÖ¸ÁîÌáÊ¾
+                                //---double tabæ‰€æœ‰ç¬¦åˆçš„æŒ‡ä»¤æç¤º
                                 // DbgLog(DBG_TELNET_SW,DBG_DETAIL,DBG_COLOR_YELLOW,DBG_TS_DIS,"Find Double TAB Cmd\r\n");
                                 start = (cmd_tbl_s *)&cmd_tbl_start;
                                 while (start < &cmd_tbl_end)
@@ -817,14 +813,14 @@ static err_t telnet_recv(void *arg, struct tcp_pcb *pcb, struct pbuf *p, err_t e
                                 {
                                     if (g_dwPingCnt > 1)
                                     {
-                                        //    ×¼±¸Í£Ö¹Ping²Ù×÷
+                                        //    å‡†å¤‡åœæ­¢Pingæ“ä½œ
                                         g_dwPingCnt = 1;
                                     }
                                 }
                             }
                             else
                             {
-                                //---single tab²¹Æë
+                                //---single tabè¡¥é½
                                 // DbgLog(DBG_TELNET_SW,DBG_DETAIL,DBG_COLOR_YELLOW,DBG_TS_DIS,"Find Single TAB Cmd\r\n");
                                 start = (cmd_tbl_s *)&cmd_tbl_start;
                                 while (start < &cmd_tbl_end)
@@ -876,18 +872,18 @@ static err_t telnet_recv(void *arg, struct tcp_pcb *pcb, struct pbuf *p, err_t e
                         {
                             if ((sys_now() - g_dwLastTelnetTabRevSysCnt) < 300)
                             {
-                                //---double tabËùÓĞ·ûºÏµÄÖ¸ÁîÌáÊ¾
+                                //---double tabæ‰€æœ‰ç¬¦åˆçš„æŒ‡ä»¤æç¤º
                                 // DbgLog(DBG_TELNET_SW,DBG_DETAIL,DBG_COLOR_YELLOW,DBG_TS_DIS,"Find Double TAB\r\n");
 
                                 if (g_dwPingCnt > 1)
                                 {
-                                    //    ×¼±¸Í£Ö¹Ping²Ù×÷
+                                    //    å‡†å¤‡åœæ­¢Pingæ“ä½œ
                                     g_dwPingCnt = 1;
                                 }
                             }
                             else
                             {
-                                //---single tab²¹Æë
+                                //---single tabè¡¥é½
                                 // DbgLog(DBG_TELNET_SW,DBG_DETAIL,DBG_COLOR_YELLOW,DBG_TS_DIS,"Find Single TAB\r\n");
                             }
                             g_dwLastTelnetTabRevSysCnt = sys_now();
@@ -898,7 +894,7 @@ static err_t telnet_recv(void *arg, struct tcp_pcb *pcb, struct pbuf *p, err_t e
                 {
                     if (g_stTelnetUsrInfo.ucLogin == TELNET_LOGIN_FAIL)
                     {
-                        if (g_stTelnetUsrInfo.ucState == TELNET_USR) // µÇÂ¼ÃûÊäÈë/ÏÔÊ¾
+                        if (g_stTelnetUsrInfo.ucState == TELNET_USR) // ç™»å½•åè¾“å…¥/æ˜¾ç¤º
                         {
                             if (g_stTelnetUsrInfo.ucUsrIndex < 99)
                             {
@@ -909,7 +905,7 @@ static err_t telnet_recv(void *arg, struct tcp_pcb *pcb, struct pbuf *p, err_t e
                                 tcp_write(pcb, g_szTelnetSndBuf, usStrLen, TCP_WRITE_FLAG_COPY);
                             }
                         }
-                        else // ÃÜÂëÊäÈë/ÏÔÊ¾
+                        else // å¯†ç è¾“å…¥/æ˜¾ç¤º
                         {
                             if (g_stTelnetUsrInfo.ucPwdIndex < 99)
                             {
@@ -922,7 +918,7 @@ static err_t telnet_recv(void *arg, struct tcp_pcb *pcb, struct pbuf *p, err_t e
                             }
                         }
                     }
-                    else // Ö¸ÁîÊäÈë/ÏÔÊ¾
+                    else // æŒ‡ä»¤è¾“å…¥/æ˜¾ç¤º
                     {
                         if (g_szTelnetCmdRevCnt < (MAX_TELNET_CMD_SIZE - 1))
                         {
@@ -938,7 +934,7 @@ static err_t telnet_recv(void *arg, struct tcp_pcb *pcb, struct pbuf *p, err_t e
                     // delete
                     if (g_stTelnetUsrInfo.ucLogin == TELNET_LOGIN_FAIL)
                     {
-                        if (g_stTelnetUsrInfo.ucState == TELNET_USR) // µÇÂ¼ÃûÉ¾³ı/ÏÔÊ¾
+                        if (g_stTelnetUsrInfo.ucState == TELNET_USR) // ç™»å½•ååˆ é™¤/æ˜¾ç¤º
                         {
                             if (g_stTelnetUsrInfo.ucUsrIndex > 0)
                             {
@@ -952,7 +948,7 @@ static err_t telnet_recv(void *arg, struct tcp_pcb *pcb, struct pbuf *p, err_t e
                             {
                             }
                         }
-                        else // ÃÜÂëÉ¾³ı/ÏÔÊ¾
+                        else // å¯†ç åˆ é™¤/æ˜¾ç¤º
                         {
                             if (g_stTelnetUsrInfo.ucPwdIndex > 0)
                             {
@@ -967,7 +963,7 @@ static err_t telnet_recv(void *arg, struct tcp_pcb *pcb, struct pbuf *p, err_t e
                             }
                         }
                     }
-                    else // Ö¸ÁîÉ¾³ı/ÏÔÊ¾
+                    else // æŒ‡ä»¤åˆ é™¤/æ˜¾ç¤º
                     {
                         if (g_szTelnetCmdRevCnt > 0)
                         {
@@ -985,7 +981,7 @@ static err_t telnet_recv(void *arg, struct tcp_pcb *pcb, struct pbuf *p, err_t e
                     //---Cmd Enter End
                     if (g_stTelnetUsrInfo.ucLogin == TELNET_LOGIN_FAIL)
                     {
-                        //---µÇÂ¼ÃûÊäÈëÍê³É
+                        //---ç™»å½•åè¾“å…¥å®Œæˆ
                         if (g_stTelnetUsrInfo.ucState == TELNET_USR)
                         {
                             if (g_stTelnetUsrInfo.ucUsrIndex == 0)
@@ -1000,7 +996,7 @@ static err_t telnet_recv(void *arg, struct tcp_pcb *pcb, struct pbuf *p, err_t e
                                 g_stTelnetUsrInfo.ucState = TELNET_PWD;
                             }
                         }
-                        //---ÃÜÂëÊäÈëÍê³É
+                        //---å¯†ç è¾“å…¥å®Œæˆ
                         else
                         {
                             if (g_stTelnetUsrInfo.ucPwdIndex == 0)
@@ -1010,7 +1006,7 @@ static err_t telnet_recv(void *arg, struct tcp_pcb *pcb, struct pbuf *p, err_t e
                             }
                             else
                             {
-                                //---µÇÂ¼³É¹¦
+                                //---ç™»å½•æˆåŠŸ
 
                                 if ((strlen(g_stTelnetUsrInfo.szUsr) == 4) && (strlen(g_stTelnetUsrInfo.szPwd) == 9) &&
                                     (strcmp(g_stTelnetUsrInfo.szUsr, "root") == 0) && (strcmp(g_stTelnetUsrInfo.szPwd, "Hik12345+") == 0))
@@ -1019,7 +1015,7 @@ static err_t telnet_recv(void *arg, struct tcp_pcb *pcb, struct pbuf *p, err_t e
                                     g_dwTelnetKeepAliveTmr = g_stGlobeOps.systimer_ops.get_runtime(NULL);
                                     Telnet_Display_Cmd_Prompt(pcb, NULL);
                                 }
-                                //---µÇÂ¼Ê§°Ü
+                                //---ç™»å½•å¤±è´¥
                                 else
                                 {
                                     usStrLen = sprintf(g_szTelnetSndBuf, "\r\n%c[1;31musr name or password error! Please try again!%c[0;37m", ESC, ESC);
@@ -1032,7 +1028,7 @@ static err_t telnet_recv(void *arg, struct tcp_pcb *pcb, struct pbuf *p, err_t e
                             }
                         }
                     }
-                    //---Ö¸ÁîÊäÈëÍê³É
+                    //---æŒ‡ä»¤è¾“å…¥å®Œæˆ
                     else
                     {
                         g_szTelnetCmdBuf[g_szTelnetCmdRevCnt] = 0;

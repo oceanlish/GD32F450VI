@@ -4,7 +4,7 @@
  * $Id: xxxbuff.c,v 1.0.0 2021/09/09 17:15:00 $
  * 
  * Description:
- *  »·ĞÎ»º³åÇøµÄ²Ù×÷½Ó¿Ú
+ *  ç¯å½¢ç¼“å†²åŒºçš„æ“ä½œæ¥å£
  *****************************************************************************
  */
 #include "dbg_log.h"
@@ -17,7 +17,7 @@ static ST_RingBuff_Can_Simple s_stRingBuffCanSimple;
 
 /**
 * @brief			CanSimpleBuff_Init
-* @detail			³õÊ¼»¯ÊÂ¼ş»º³åÇø
+* @detail			åˆå§‹åŒ–äº‹ä»¶ç¼“å†²åŒº
 * @return									
 */
 void CanSimpleBuff_Init(void)
@@ -29,9 +29,9 @@ void CanSimpleBuff_Init(void)
 
 /**
 * @brief			CanSimpleBuff_Push
-* @detail			²åÈëÔªËØÖÁ»·ĞÎ»º³åÇø
-* @param[in]	pUnit: ²åÈëµÄµ¥Ôª
-* @return			0:²åÈë³É¹¦  ÆäËûÊ§°Ü								
+* @detail			æ’å…¥å…ƒç´ è‡³ç¯å½¢ç¼“å†²åŒº
+* @param[in]	pUnit: æ’å…¥çš„å•å…ƒ
+* @return			0:æ’å…¥æˆåŠŸ  å…¶ä»–å¤±è´¥								
 */
 int CanSimpleBuff_Push(void *pUnit)
 {
@@ -41,9 +41,9 @@ int CanSimpleBuff_Push(void *pUnit)
 
 /**
 * @brief			CanSimpleBuff_Pop
-* @detail			´Ó»·ĞÎ»º³åÇø³ö¿Ú»ñÈ¡Ò»¸öµ¥Ôª£¬²¢ÒÆ³ı
-* @param[out]	pUnit: »ñÈ¡µÄµ¥Ôª
-* @return			0:³É¹¦  ÆäËûÊ§°Ü								
+* @detail			ä»ç¯å½¢ç¼“å†²åŒºå‡ºå£è·å–ä¸€ä¸ªå•å…ƒï¼Œå¹¶ç§»é™¤
+* @param[out]	pUnit: è·å–çš„å•å…ƒ
+* @return			0:æˆåŠŸ  å…¶ä»–å¤±è´¥								
 */
 int CanSimpleBuff_Pop(void *pUnit)
 {
@@ -52,9 +52,9 @@ int CanSimpleBuff_Pop(void *pUnit)
 
 /**
 * @brief			CanSimpleBuff_GetFreeSize
-* @detail			»ñÈ¡»½ĞÑ»º³åÇøÊ£Óà¿Õ¼ä´óĞ¡
-* @param[out]	pUnit: »ñÈ¡µÄµ¥Ôª
-* @return			0:³É¹¦  ÆäËûÊ§°Ü								
+* @detail			è·å–å”¤é†’ç¼“å†²åŒºå‰©ä½™ç©ºé—´å¤§å°
+* @param[out]	pUnit: è·å–çš„å•å…ƒ
+* @return			0:æˆåŠŸ  å…¶ä»–å¤±è´¥								
 */
 int CanSimpleBuff_GetFreeSize(void)
 {

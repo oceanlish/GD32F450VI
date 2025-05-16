@@ -24,6 +24,7 @@
 #include "sys_timer.h"     // 定时器服务
 #include "sys_monitor.h"   // 系统监控服务
 #include "interface.h"     // 接口抽象层
+#include "sys_base.h"      // 系统基础功能(复位)
 
 /* API层 */
 #include "api_sys_param.h" // 系统参数管理

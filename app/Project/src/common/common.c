@@ -267,7 +267,7 @@ unsigned char IPMaskCheck(unsigned char *pMask)
 		i++;
 	}
 
-	// È« 0 »òÕßÈ« 1 ¶¼·µ»ØÊ§°Ü
+	// å…¨ 0 æˆ–è€…å…¨ 1 éƒ½è¿”å›å¤±è´¥
 	if((dwMask == 0) || (i == 0))
 	{
 		return 0;
@@ -312,27 +312,27 @@ unsigned char CheckGateWayIP(unsigned char *pLocalIP, unsigned char *pMask, unsi
 	
 	if(memcmp(aLocalNetIPTmp,aLocalNetIP,4) != 0)
 	{
-		return 2;  // Íø¹ØËùÊô×ÓÍøµØÖ·ºÍ±¾µØIPËùÊô×ÓÍøµØÖ·²»Í¬
+		return 2;  // ç½‘å…³æ‰€å±å­ç½‘åœ°å€å’Œæœ¬åœ°IPæ‰€å±å­ç½‘åœ°å€ä¸åŒ
 	}
 
 	if(memcmp(pLocalGW,aLocalNetIP,4) == 0)
 	{
-		return 3;  // Íø¹ØµÈÓÚ×ÓÍøµØÖ·
+		return 3;  // ç½‘å…³ç­‰äºå­ç½‘åœ°å€
 	}
 
 	if(memcmp(pLocalGW,aLocalNetBoardCastIP,4) == 0)
 	{
-		return 4;  // Íø¹ØµÈÓÚ×ÓÍø¹ã²¥µØÖ·
+		return 4;  // ç½‘å…³ç­‰äºå­ç½‘å¹¿æ’­åœ°å€
 	}
 
 	if(memcmp(pLocalIP,aLocalNetIP,4) == 0)
 	{
-		return 5;  // IPµÈÓÚ×ÓÍøµØÖ·
+		return 5;  // IPç­‰äºå­ç½‘åœ°å€
 	}
 
 	if(memcmp(pLocalIP,aLocalNetBoardCastIP,4) == 0)
 	{
-		return 6;  // IPµÈÓÚ×ÓÍø¹ã²¥µØÖ·
+		return 6;  // IPç­‰äºå­ç½‘å¹¿æ’­åœ°å€
 	}
 
 	return 1;

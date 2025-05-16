@@ -1,7 +1,7 @@
 /**
  * @file telnet.h
- * @brief Telnet·şÎñÏà¹Ø½á¹¹ÌåÓë½Ó¿ÚÉùÃ÷
- * @author ÓÅ»¯Õß
+ * @brief TelnetæœåŠ¡ç›¸å…³ç»“æ„ä½“ä¸æ¥å£å£°æ˜
+ * @author ä¼˜åŒ–è€…
  * @date 2024-xx-xx
  */
 
@@ -15,55 +15,59 @@
 
 #define ESC '\033'
 
+/* Telnetå‘½ä»¤ç›¸å…³å®å®šä¹‰ */
+#define MAX_TELNET_CMD_SIZE       50     // å•æ¡Telnetå‘½ä»¤æœ€å¤§é•¿åº¦
+#define MAX_TELNET_CMD_BUFF_LEN   10     // Telnetå‘½ä»¤ç¼“å­˜æ¡æ•°
+
 /**
- * @brief TelnetÓÃ»§ĞÅÏ¢½á¹¹Ìå
+ * @brief Telnetç”¨æˆ·ä¿¡æ¯ç»“æ„ä½“
  */
 typedef struct
 {
-    unsigned char ucState;    // TelnetµÇÂ¼½×¶Î×´Ì¬(ÓÃ»§Ãû/ÃÜÂë½×¶Î)
-    unsigned char ucLogin;    // µÇÂ¼×´Ì¬(³É¹¦/Ê§°Ü)
-    unsigned char ucUsrIndex; // ÓÃ»§ÃûÊäÈëË÷Òı
-    char szUsr[100];         // ÓÃ»§Ãû»º´æ
-    unsigned char ucPwdIndex; // ÃÜÂëÊäÈëË÷Òı
-    char szPwd[100];         // ÃÜÂë»º´æ
+    unsigned char ucState;    // Telnetç™»å½•é˜¶æ®µçŠ¶æ€(ç”¨æˆ·å/å¯†ç é˜¶æ®µ)
+    unsigned char ucLogin;    // ç™»å½•çŠ¶æ€(æˆåŠŸ/å¤±è´¥)
+    unsigned char ucUsrIndex; // ç”¨æˆ·åè¾“å…¥ç´¢å¼•
+    char szUsr[100];         // ç”¨æˆ·åç¼“å­˜
+    unsigned char ucPwdIndex; // å¯†ç è¾“å…¥ç´¢å¼•
+    char szPwd[100];         // å¯†ç ç¼“å­˜
 } TELNET_USR_INFO;
 
 /**
- * @brief TelnetÃüÁîÏî½á¹¹Ìå
+ * @brief Telnetå‘½ä»¤é¡¹ç»“æ„ä½“
  */
 typedef struct
 {
-    char szCmd[MAX_TELNET_CMD_SIZE]; // µ¥ÌõÃüÁî»º´æ
+    char szCmd[MAX_TELNET_CMD_SIZE]; // å•æ¡å‘½ä»¤ç¼“å­˜
 } TELNET_CMD_ITEM;
 
 /**
- * @brief TelnetÃüÁîÁ´±í½á¹¹Ìå,ÓÃÓÚÊµÏÖÃüÁîÀúÊ·¼ÇÂ¼¹¦ÄÜ
+ * @brief Telnetå‘½ä»¤é“¾è¡¨ç»“æ„ä½“,ç”¨äºå®ç°å‘½ä»¤å†å²è®°å½•åŠŸèƒ½
  */
 typedef struct
 {
-    unsigned char ucRead;     // ¶ÁÖ¸Õë
-    unsigned char ucWrite;    // Ğ´Ö¸Õë
-    unsigned char ucIndex;    // µ±Ç°Ë÷Òı
-    TELNET_CMD_ITEM stCmdList[MAX_TELNET_CMD_BUFF_LEN]; // ÃüÁîÀúÊ·¼ÇÂ¼Êı×é
+    unsigned char ucRead;     // è¯»æŒ‡é’ˆ
+    unsigned char ucWrite;    // å†™æŒ‡é’ˆ
+    unsigned char ucIndex;    // å½“å‰ç´¢å¼•
+    TELNET_CMD_ITEM stCmdList[MAX_TELNET_CMD_BUFF_LEN]; // å‘½ä»¤å†å²è®°å½•æ•°ç»„
 } TELNET_CMD_LINKLIST;
 
 
 /**
- * @brief ÈÕÖ¾ÏûÏ¢»º³åÇø½á¹¹Ìå
+ * @brief æ—¥å¿—æ¶ˆæ¯ç¼“å†²åŒºç»“æ„ä½“
  */
 typedef struct {
-    unsigned short offset;    /**< Æ«ÒÆÁ¿ */
-    unsigned short sndpos;    /**< ·¢ËÍÎ»ÖÃ */
-    char szMsg[5120];         /**< ÏûÏ¢ÄÚÈİ */
+    unsigned short offset;    /**< åç§»é‡ */
+    unsigned short sndpos;    /**< å‘é€ä½ç½® */
+    char szMsg[5120];         /**< æ¶ˆæ¯å†…å®¹ */
 } DbgLogMsgBuff;
 
 /**
- * @brief Telnet³õÊ¼»¯
+ * @brief Telnetåˆå§‹åŒ–
  */
 void Telnet_Init(void);
 
 /**
- * @brief Ping´¦ÀíÖ÷Á÷³Ì
+ * @brief Pingå¤„ç†ä¸»æµç¨‹
  */
 void ping_proc(void);
 

@@ -1,67 +1,80 @@
+/*
+ * @Author: ShengHai mrlsh@foxmail.com
+ * @Date: 2025-05-15 16:55:51
+ * @LastEditors: ShengHai mrlsh@foxmail.com
+ * @LastEditTime: 2025-05-16 16:12:06
+ * @FilePath: \demo\app\Project\src\sys\sys_base.h
+ * @Description: è¿™æ˜¯é»˜è®¤è®¾ç½®,è¯·è®¾ç½®`customMade`, æ‰“å¼€koroFileHeaderæŸ¥çœ‹é…ç½® è¿›è¡Œè®¾ç½®: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 #ifndef _SYS_BASE_H_
 #define _SYS_BASE_H_
 
 /**
- * @brief ÏµÍ³Ö¸Ê¾²ÎÊı½á¹¹Ìå
+ * @brief ç³»ç»ŸæŒ‡ç¤ºå‚æ•°ç»“æ„ä½“
  */
 typedef struct
 {
-    void *pbeep_fd;        /**< ·äÃùÆ÷ÎÄ¼şÃèÊö·ûÖ¸Õë */
-    void *pbtn_fd;         /**< °´¼üÎÄ¼şÃèÊö·ûÖ¸Õë */
-    void *pwdt_fd;         /**< ¿´ÃÅ¹·ÎÄ¼şÃèÊö·ûÖ¸Õë */
-    void *pmodule_rst_fd;  /**< Ä£¿é¸´Î»ÎÄ¼şÃèÊö·ûÖ¸Õë */
+    void *pbeep_fd;        /**< èœ‚é¸£å™¨æ–‡ä»¶æè¿°ç¬¦æŒ‡é’ˆ */
+    void *pbtn_fd;         /**< æŒ‰é”®æ–‡ä»¶æè¿°ç¬¦æŒ‡é’ˆ */
+    void *pwdt_fd;         /**< çœ‹é—¨ç‹—æ–‡ä»¶æè¿°ç¬¦æŒ‡é’ˆ */
+    void *pmodule_rst_fd;  /**< æ¨¡å—å¤ä½æ–‡ä»¶æè¿°ç¬¦æŒ‡é’ˆ */
 } SysIndicationParams;
 
 /**
- * @brief ³õÊ¼»¯LWIPĞ­ÒéÕ»
+ * @brief åˆå§‹åŒ–LWIPåè®®æ ˆ
  */
 void Lwip_Init(void);
 
 /**
- * @brief ÍøÂçÖÜÆÚÈÎÎñ
- * @param pvParameters ÈÎÎñ²ÎÊı
+ * @brief ç½‘ç»œå‘¨æœŸä»»åŠ¡
+ * @param pvParameters ä»»åŠ¡å‚æ•°
  */
 void Net_Periodic_Task(void *pvParameters);
 
 /**
- * @brief ÏµÍ³¶ÑÕ»¼ì²éÈÎÎñ
- * @param pvParameters ÈÎÎñ²ÎÊı
+ * @brief ç³»ç»Ÿå †æ ˆæ£€æŸ¥ä»»åŠ¡
+ * @param pvParameters ä»»åŠ¡å‚æ•°
  */
 void Sys_Check_Stk_Task(void *pvParameters);
 
 /**
- * @brief ÏµÍ³×´Ì¬ÈÎÎñ
- * @param pvParameters ÈÎÎñ²ÎÊı
+ * @brief ç³»ç»ŸçŠ¶æ€ä»»åŠ¡
+ * @param pvParameters ä»»åŠ¡å‚æ•°
  */
 void Sys_State_Task(void *pvParameters);
 
 /**
- * @brief ÏµÍ³ÑÓÊ±ÖØÆô
- * @param usSec ÑÓÊ±Ê±¼ä£¨Ãë£©
+ * @brief ç³»ç»Ÿå»¶æ—¶é‡å¯
+ * @param usSec å»¶æ—¶æ—¶é—´ï¼ˆç§’ï¼‰
  */
 void Sys_Delay_Reset(unsigned short usSec);
 
 /**
- * @brief »ñÈ¡·äÃùÆ÷ÎÄ¼şÃèÊö·û
- * @return ÎÄ¼şÃèÊö·ûÖ¸Õë
+ * @brief è·å–èœ‚é¸£å™¨æ–‡ä»¶æè¿°ç¬¦
+ * @return æ–‡ä»¶æè¿°ç¬¦æŒ‡é’ˆ
  */
 void *Sys_GetBeepFd(void);
 
 /**
- * @brief »ñÈ¡LEDÎÄ¼şÃèÊö·û
- * @return ÎÄ¼şÃèÊö·ûÖ¸Õë
+ * @brief è·å–LEDæ–‡ä»¶æè¿°ç¬¦
+ * @return æ–‡ä»¶æè¿°ç¬¦æŒ‡é’ˆ
  */
 void *Sys_GetLedFd(void);
 
 /**
- * @brief ½ûÖ¹Î¹¹·²âÊÔ
+ * @brief ç¦æ­¢å–‚ç‹—æµ‹è¯•
  */
 void Sys_DisFeedWdtTest(void);
 
 /**
- * @brief ½ûÖ¹Î¹¹·
+ * @brief ç¦æ­¢å–‚ç‹—
  */
 void Sys_DisFeedWdt(void);
+
+/**
+ * @brief æ¨¡å—å¤ä½æ“ä½œ
+ */
+void Sys_ModuleReset(void);
 
 #endif
 

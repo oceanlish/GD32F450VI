@@ -1,6 +1,6 @@
 /**
  * @file api_gpio.c
- * @brief GPIO¿ØÖÆÓë°´¼ü¹ÜÀíAPIÊµÏÖÎÄ¼þ
+ * @brief GPIOæŽ§åˆ¶ä¸ŽæŒ‰é”®ç®¡ç†APIå®žçŽ°æ–‡ä»¶
  * @author 
  * @date 
  * @version 1.0
@@ -13,14 +13,14 @@
 #include "api_gpio.h"
 
 /**
- * @brief GPIOÖ÷½á¹¹Ìå¾²Ì¬ÊµÀý
+ * @brief GPIOä¸»ç»“æž„ä½“é™æ€å®žä¾‹
  */
 static ApiGpio s_ApiGpio;
 
 /**
- * @brief ¶ÁÈ¡Ö¸¶¨GPIOµÄµçÆ½Öµ
- * @param index GPIOË÷Òý
- * @return ¶ÁÈ¡µ½µÄµçÆ½Öµ»ò-1±íÊ¾Ê§°Ü
+ * @brief è¯»å–æŒ‡å®šGPIOçš„ç”µå¹³å€¼
+ * @param index GPIOç´¢å¼•
+ * @return è¯»å–åˆ°çš„ç”µå¹³å€¼æˆ–-1è¡¨ç¤ºå¤±è´¥
  */
 int Api_Gpio_Read(int index)
 {
@@ -35,10 +35,10 @@ int Api_Gpio_Read(int index)
 }
 
 /**
- * @brief ÉèÖÃÖ¸¶¨GPIOµÄµçÆ½Öµ
- * @param index GPIOË÷Òý
- * @param value ÉèÖÃµÄµçÆ½Öµ
- * @return 0³É¹¦£¬-1Ê§°Ü
+ * @brief è®¾ç½®æŒ‡å®šGPIOçš„ç”µå¹³å€¼
+ * @param index GPIOç´¢å¼•
+ * @param value è®¾ç½®çš„ç”µå¹³å€¼
+ * @return 0æˆåŠŸï¼Œ-1å¤±è´¥
  */
 int Api_Gpio_Write(int index, int value)
 {
@@ -54,9 +54,9 @@ int Api_Gpio_Write(int index, int value)
 }
 
 /**
- * @brief ·­×ªÖ¸¶¨GPIOµÄµçÆ½Öµ
- * @param index GPIOË÷Òý
- * @return 0³É¹¦£¬-1Ê§°Ü
+ * @brief ç¿»è½¬æŒ‡å®šGPIOçš„ç”µå¹³å€¼
+ * @param index GPIOç´¢å¼•
+ * @return 0æˆåŠŸï¼Œ-1å¤±è´¥
  */
 int Api_Gpio_Toggle(int index)
 {
@@ -72,10 +72,10 @@ int Api_Gpio_Toggle(int index)
 }
 
 /**
- * @brief ³õÊ¼»¯GPIO¿ØÖÆÆ÷
- * @param[out] ioctl_fd IO¿ØÖÆ¾ä±ú
- * @param[in] init ³õÊ¼»¯²ÎÊý
- * @return 0³É¹¦£¬-1Ê§°Ü
+ * @brief åˆå§‹åŒ–GPIOæŽ§åˆ¶å™¨
+ * @param[out] ioctl_fd IOæŽ§åˆ¶å¥æŸ„
+ * @param[in] init åˆå§‹åŒ–å‚æ•°
+ * @return 0æˆåŠŸï¼Œ-1å¤±è´¥
  */
 int Api_Gpo_Ctl_Init(void **ioctl_fd, ApiGpioCtlInit *init)
 {
@@ -108,8 +108,8 @@ int Api_Gpo_Ctl_Init(void **ioctl_fd, ApiGpioCtlInit *init)
 }
 
 /**
- * @brief ÊÍ·ÅGPIO¿ØÖÆÆ÷
- * @param ioctl_fd IO¿ØÖÆ¾ä±ú
+ * @brief é‡Šæ”¾GPIOæŽ§åˆ¶å™¨
+ * @param ioctl_fd IOæŽ§åˆ¶å¥æŸ„
  * @return 0
  */
 int Api_Gpo_Ctl_DeInit(void *ioctl_fd)
@@ -123,10 +123,10 @@ int Api_Gpo_Ctl_DeInit(void *ioctl_fd)
 }
 
 /**
- * @brief Ö´ÐÐGPIO¿ØÖÆÃüÁî
- * @param ioctl_fd IO¿ØÖÆ¾ä±ú
- * @param ctl ¿ØÖÆÃüÁî
- * @return 0³É¹¦£¬-1Ê§°Ü
+ * @brief æ‰§è¡ŒGPIOæŽ§åˆ¶å‘½ä»¤
+ * @param ioctl_fd IOæŽ§åˆ¶å¥æŸ„
+ * @param ctl æŽ§åˆ¶å‘½ä»¤
+ * @return 0æˆåŠŸï¼Œ-1å¤±è´¥
  */
 int Api_Gpo_Ctl(void *ioctl_fd, ApiGpioCtl *ctl)
 {
@@ -190,8 +190,8 @@ int Api_Gpo_Ctl(void *ioctl_fd, ApiGpioCtl *ctl)
 }
 
 /**
- * @brief GPIO¿ØÖÆÖÜÆÚ´¦Àí
- * @param pEntry ¿ØÖÆ±íÏîÖ¸Õë
+ * @brief GPIOæŽ§åˆ¶å‘¨æœŸå¤„ç†
+ * @param pEntry æŽ§åˆ¶è¡¨é¡¹æŒ‡é’ˆ
  */
 void Api_Gpo_Period(ApiGpioCtlMapEntry *pEntry)
 {
@@ -231,10 +231,10 @@ void Api_Gpo_Period(ApiGpioCtlMapEntry *pEntry)
 }
 
 /**
- * @brief ³õÊ¼»¯°´¼ü¿ØÖÆÆ÷
- * @param[out] ioctl_fd IO¿ØÖÆ¾ä±ú
- * @param[in] init ³õÊ¼»¯²ÎÊý
- * @return 0³É¹¦£¬-1Ê§°Ü
+ * @brief åˆå§‹åŒ–æŒ‰é”®æŽ§åˆ¶å™¨
+ * @param[out] ioctl_fd IOæŽ§åˆ¶å¥æŸ„
+ * @param[in] init åˆå§‹åŒ–å‚æ•°
+ * @return 0æˆåŠŸï¼Œ-1å¤±è´¥
  */
 int Api_Gpi_Btn_Init(void **ioctl_fd, ApiGpioCtlInit *init)
 {
@@ -269,8 +269,8 @@ int Api_Gpi_Btn_Init(void **ioctl_fd, ApiGpioCtlInit *init)
 }
 
 /**
- * @brief ÊÍ·Å°´¼ü¿ØÖÆÆ÷
- * @param ioctl_fd IO¿ØÖÆ¾ä±ú
+ * @brief é‡Šæ”¾æŒ‰é”®æŽ§åˆ¶å™¨
+ * @param ioctl_fd IOæŽ§åˆ¶å¥æŸ„
  * @return 0
  */
 int Api_Gpi_Btn_DeInit(void *ioctl_fd)
@@ -284,10 +284,10 @@ int Api_Gpi_Btn_DeInit(void *ioctl_fd)
 }
 
 /**
- * @brief °´¼üÊÂ¼þ»Øµ÷°ó¶¨
- * @param ioctl_fd IO¿ØÖÆ¾ä±ú
- * @param event ÊÂ¼þÀàÐÍ
- * @param cb »Øµ÷º¯Êý
+ * @brief æŒ‰é”®äº‹ä»¶å›žè°ƒç»‘å®š
+ * @param ioctl_fd IOæŽ§åˆ¶å¥æŸ„
+ * @param event äº‹ä»¶ç±»åž‹
+ * @param cb å›žè°ƒå‡½æ•°
  * @return 0
  */
 int Api_Gpi_Btn_Attach(void *ioctl_fd, PressEvent event, BtnCallback cb)
@@ -298,9 +298,9 @@ int Api_Gpi_Btn_Attach(void *ioctl_fd, PressEvent event, BtnCallback cb)
 }
 
 /**
- * @brief »ñÈ¡°´¼üµ±Ç°ÊÂ¼þ
- * @param ioctl_fd IO¿ØÖÆ¾ä±ú
- * @return µ±Ç°ÊÂ¼þ
+ * @brief èŽ·å–æŒ‰é”®å½“å‰äº‹ä»¶
+ * @param ioctl_fd IOæŽ§åˆ¶å¥æŸ„
+ * @return å½“å‰äº‹ä»¶
  */
 int Api_Gpi_Btn_Event(void *ioctl_fd)
 {
@@ -309,8 +309,8 @@ int Api_Gpi_Btn_Event(void *ioctl_fd)
 }
 
 /**
- * @brief °´¼üÖÜÆÚ´¦Àí
- * @param pEntry °´¼ü±íÏîÖ¸Õë
+ * @brief æŒ‰é”®å‘¨æœŸå¤„ç†
+ * @param pEntry æŒ‰é”®è¡¨é¡¹æŒ‡é’ˆ
  */
 void Api_Gpi_Btn_Period(ApiButtonMapEntry *pEntry)
 {
@@ -329,7 +329,7 @@ void Api_Gpi_Btn_Period(ApiButtonMapEntry *pEntry)
     case 0:
         if (pEntry->button_level == pEntry->active_level) {
             logs(DBG_GPIO_SW, DBG_INFO, DBG_COLOR_YELLOW, DBG_TS_EN, "[Api Gpio] Gpi Btn Event [PRESS_DOWN]!\n");
-            // ÕâÀï¿ÉÀ©Õ¹ÊÂ¼þ´¦Àí
+            // è¿™é‡Œå¯æ‰©å±•äº‹ä»¶å¤„ç†
         }
         break;
     default:
@@ -338,37 +338,37 @@ void Api_Gpi_Btn_Period(ApiButtonMapEntry *pEntry)
 }
 
 /**
- * @brief GPIO¿ØÖÆÖÜÆÚ´¦Àíº¯Êý
- * @return 0³É¹¦
+ * @brief GPIOæŽ§åˆ¶å‘¨æœŸå¤„ç†å‡½æ•°
+ * @return 0æˆåŠŸ
  */
 int Api_Gpio_Ctl_Period(void)
 {
     int index = 0;
 
-    // ¼ì²éÊÇ·ñµ½´ïÖÜÆÚ´¦ÀíÊ±¼ä¼ä¸ô
+    // æ£€æŸ¥æ˜¯å¦åˆ°è¾¾å‘¨æœŸå¤„ç†æ—¶é—´é—´éš”
     if (g_stGlobeOps.systimer_ops.diff_runtime(&s_ApiGpio.map.timer) >= TICKS_INTERVAL)
     {
-        // ¸üÐÂ¶¨Ê±Æ÷Ê±¼ä´Á
+        // æ›´æ–°å®šæ—¶å™¨æ—¶é—´æˆ³
         g_stGlobeOps.systimer_ops.get_runtime(&s_ApiGpio.map.timer);
 
-        // ±éÀúËùÓÐ°´¼ü¿ØÖÆÆ÷,´¦Àí°´¼üÊÂ¼þ
+        // éåŽ†æ‰€æœ‰æŒ‰é”®æŽ§åˆ¶å™¨,å¤„ç†æŒ‰é”®äº‹ä»¶
         for (index = 0; index < NUM_BTN_CTL; index++)
         {
-            // ¼ì²é°´¼ü¿ØÖÆÆ÷ÊÇ·ñÔÚÊ¹ÓÃÖÐ
+            // æ£€æŸ¥æŒ‰é”®æŽ§åˆ¶å™¨æ˜¯å¦åœ¨ä½¿ç”¨ä¸­
             if (s_ApiGpio.map.BtnEntry[index].is_used == GPIO_CTL_ENTRY_USED)
             {
-                // Ö´ÐÐ°´¼üÖÜÆÚ´¦Àí
+                // æ‰§è¡ŒæŒ‰é”®å‘¨æœŸå¤„ç†
                 Api_Gpi_Btn_Period(&s_ApiGpio.map.BtnEntry[index]);
             }
         }
 
-        // ±éÀúËùÓÐGPIO¿ØÖÆÆ÷,´¦ÀíGPIOÊÂ¼þ
+        // éåŽ†æ‰€æœ‰GPIOæŽ§åˆ¶å™¨,å¤„ç†GPIOäº‹ä»¶
         for (index = 0; index < NUM_GPIO_CTL; index++)
         {
-            // ¼ì²éGPIO¿ØÖÆÆ÷ÊÇ·ñÔÚÊ¹ÓÃÖÐ
+            // æ£€æŸ¥GPIOæŽ§åˆ¶å™¨æ˜¯å¦åœ¨ä½¿ç”¨ä¸­
             if (s_ApiGpio.map.Entry[index].is_used == GPIO_CTL_ENTRY_USED)
             {
-                // Ö´ÐÐGPIOÖÜÆÚ´¦Àí
+                // æ‰§è¡ŒGPIOå‘¨æœŸå¤„ç†
                 Api_Gpo_Period(&s_ApiGpio.map.Entry[index]);
             }
         }
@@ -381,41 +381,41 @@ int Api_Gpio_Init(void)
 {
     llifParams params;
 
-    // ´òÓ¡½øÈëº¯ÊýµÄÈÕÖ¾
+    // æ‰“å°è¿›å…¥å‡½æ•°çš„æ—¥å¿—
     logs(DBG_GPIO_SW, DBG_DETAIL, DBG_COLOR_NULL, DBG_TS_EN, "[Api Gpio] Enter %s\n", __FUNCTION__);
     
-    // ³õÊ¼»¯GPIOÖ÷½á¹¹Ìå
+    // åˆå§‹åŒ–GPIOä¸»ç»“æž„ä½“
     memset(&s_ApiGpio, 0, sizeof(s_ApiGpio));
     
-    // »ñÈ¡ÏµÍ³Ê±¼ä
+    // èŽ·å–ç³»ç»Ÿæ—¶é—´
     g_stGlobeOps.systimer_ops.get_runtime(&s_ApiGpio.map.timer);
     
-    // ÉèÖÃGPIO½Ó¿ÚÀàÐÍ
+    // è®¾ç½®GPIOæŽ¥å£ç±»åž‹
     params.inf_type = INF_GPIO;
 
-    // ´ò¿ªGPIOÉè±¸
+    // æ‰“å¼€GPIOè®¾å¤‡
     if (-1 == g_stGlobeOps.if_ops.open(&params, &s_ApiGpio.gpio_fd))
     {
         logs(DBG_GPIO_SW, DBG_ERR, DBG_COLOR_RED, DBG_TS_EN, "[Api Gpio] Gpio Open error!\n");
         return -1;
     }
 
-    // ³õÊ¼»¯»¥³âËø
+    // åˆå§‹åŒ–äº’æ–¥é”
     g_stGlobeOps.mutex_ops.init("api_lock", &s_ApiGpio.map.s_iLock);
 
-    // ×¢²áGPIO²Ù×÷º¯Êý
-    g_stGlobeOps.gpio_ops.gpio_read = Api_Gpio_Read;          // GPIO¶ÁÈ¡
-    g_stGlobeOps.gpio_ops.gpio_write = Api_Gpio_Write;        // GPIOÐ´Èë
-    g_stGlobeOps.gpio_ops.gpio_toggle = Api_Gpio_Toggle;      // GPIO·­×ª
-    g_stGlobeOps.gpio_ops.gpo_ioctl_init = Api_Gpo_Ctl_Init;    // GPIOÊä³ö¿ØÖÆ³õÊ¼»¯
-    g_stGlobeOps.gpio_ops.gpo_ioctl_deinit = Api_Gpo_Ctl_DeInit; // GPIOÊä³ö¿ØÖÆ·´³õÊ¼»¯
-    g_stGlobeOps.gpio_ops.gpo_ioctl = Api_Gpo_Ctl;           // GPIOÊä³ö¿ØÖÆ
-    g_stGlobeOps.gpio_ops.gpi_btn_init = Api_Gpi_Btn_Init;     // °´¼ü³õÊ¼»¯
-    g_stGlobeOps.gpio_ops.gpi_btn_deinit = Api_Gpi_Btn_DeInit;  // °´¼ü·´³õÊ¼»¯
-    g_stGlobeOps.gpio_ops.gpi_btn_attach = Api_Gpi_Btn_Attach;  // °´¼üÊÂ¼þ°ó¶¨
-    g_stGlobeOps.gpio_ops.gpi_btn_event = Api_Gpi_Btn_Event;    // °´¼üÊÂ¼þ»ñÈ¡
+    // æ³¨å†ŒGPIOæ“ä½œå‡½æ•°
+    g_stGlobeOps.gpio_ops.gpio_read = Api_Gpio_Read;          // GPIOè¯»å–
+    g_stGlobeOps.gpio_ops.gpio_write = Api_Gpio_Write;        // GPIOå†™å…¥
+    g_stGlobeOps.gpio_ops.gpio_toggle = Api_Gpio_Toggle;      // GPIOç¿»è½¬
+    g_stGlobeOps.gpio_ops.gpo_ioctl_init = Api_Gpo_Ctl_Init;    // GPIOè¾“å‡ºæŽ§åˆ¶åˆå§‹åŒ–
+    g_stGlobeOps.gpio_ops.gpo_ioctl_deinit = Api_Gpo_Ctl_DeInit; // GPIOè¾“å‡ºæŽ§åˆ¶ååˆå§‹åŒ–
+    g_stGlobeOps.gpio_ops.gpo_ioctl = Api_Gpo_Ctl;           // GPIOè¾“å‡ºæŽ§åˆ¶
+    g_stGlobeOps.gpio_ops.gpi_btn_init = Api_Gpi_Btn_Init;     // æŒ‰é”®åˆå§‹åŒ–
+    g_stGlobeOps.gpio_ops.gpi_btn_deinit = Api_Gpi_Btn_DeInit;  // æŒ‰é”®ååˆå§‹åŒ–
+    g_stGlobeOps.gpio_ops.gpi_btn_attach = Api_Gpi_Btn_Attach;  // æŒ‰é”®äº‹ä»¶ç»‘å®š
+    g_stGlobeOps.gpio_ops.gpi_btn_event = Api_Gpi_Btn_Event;    // æŒ‰é”®äº‹ä»¶èŽ·å–
 
-    // ×¢²áGPIOÖÜÆÚ´¦Àíº¯Êý
+    // æ³¨å†ŒGPIOå‘¨æœŸå¤„ç†å‡½æ•°
     g_stGlobeOps.gpio_ops.gpio_ioctl_period = Api_Gpio_Ctl_Period;
 
     return 0;
